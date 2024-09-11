@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     String macAddress = Bluetooth.getConnectedDeviceMac();
+                    String deviceName = Bluetooth.getConnectedDeviceName();
 
                     if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
                         // Optional: You could reset the button text back to default here
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         imgBtIndicator.setImageResource(R.drawable.green_circle);
                         txtEtatBt.setText("Connected");
-                        txtAddressMac.setText("MAC Address: " + macAddress);
+                        txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
 
                         refreshButton.setText("Found");
                     }

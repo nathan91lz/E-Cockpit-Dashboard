@@ -23,4 +23,23 @@ public class Bluetooth {
 
         return "No connected Bluetooth device found";
     }
+
+    // function get device name
+    public static String getConnectedDeviceName() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Ensure Bluetooth is supported and enabled
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            return "Bluetooth not enabled or not supported";
+        }
+
+        // Iterate over paired devices to find connected device
+        for (BluetoothDevice device : bluetoothAdapter.getBondedDevices()) {
+            // Return the name of the first paired device
+            return device.getName();
+        }
+
+        return "No connected Bluetooth device found";
+    }
+
 }
