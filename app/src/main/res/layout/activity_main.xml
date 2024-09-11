@@ -9,16 +9,16 @@
 
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtAddressMac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Adress MAC :"
+        android:text="MAC Address :"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.312"
+        app:layout_constraintHorizontal_bias="0.049"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.183" />
+        app:layout_constraintVertical_bias="0.125" />
 
     <TextView
         android:id="@+id/txtEtatBt"
@@ -45,10 +45,10 @@
         app:layout_constraintVertical_bias="0.053" />
 
     <Button
-        android:id="@+id/bpTest"
-        android:layout_width="103dp"
-        android:layout_height="49dp"
-        android:text="Test"
+        android:id="@+id/bpRefresh"
+        android:layout_width="139dp"
+        android:layout_height="47dp"
+        android:text="Refresh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
