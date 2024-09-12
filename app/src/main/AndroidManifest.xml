@@ -37,7 +37,9 @@
         </activity>
 
 <!--        fragment e-cockpit layout-->
-        <activity android:name=".ECockpitDashboardActivity" />
+        <activity android:name=".ECockpitDashboardActivity"
+            android:theme="@style/Theme.ECockpitDashboard.FullScreen"
+            android:exported="true"/>
 
     </application>
 

@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
 public class Bluetooth {
+    protected String bluetoothDevice;
+
     // function to get the MAC address of the currently connected Bluetooth device
     public static String getConnectedDeviceMac() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

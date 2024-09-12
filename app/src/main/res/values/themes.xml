@@ -1,20 +1,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- basic application theme. -->
     <style name="Base.Theme.ECockpitDashboard" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
     <style name="Theme.ECockpitDashboard" parent="Base.Theme.ECockpitDashboard" />
 
     <!-- Splash Screen Theme -->
     <style name="Theme.ECockpitDashboard.Splash" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Black background -->
-        <item name="android:windowBackground">@android:color/black</item>
+
         <!-- Hide the action bar -->
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <!-- Optional: Center the content -->
         <item name="android:windowContentOverlay">@android:color/black</item>
     </style>
+
+    <!-- Full-Screen Theme for ECockpitDashboardActivity -->
+    <style name="Theme.ECockpitDashboard.FullScreen" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- remove action bar and make window full-screen -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- set the navigation bar color -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+
 </resources>
