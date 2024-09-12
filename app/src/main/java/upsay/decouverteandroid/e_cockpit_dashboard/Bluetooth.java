@@ -33,7 +33,7 @@ public class Bluetooth {
             return "Bluetooth not enabled or not supported";
         }
 
-        // Iterate over paired devices to find connected device
+        // iterate over paired devices to find connected device
         for (BluetoothDevice device : bluetoothAdapter.getBondedDevices()) {
             // Return the name of the first paired device
             return device.getName();

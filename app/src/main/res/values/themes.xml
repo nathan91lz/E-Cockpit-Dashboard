@@ -6,4 +6,15 @@
     </style>
 
     <style name="Theme.ECockpitDashboard" parent="Base.Theme.ECockpitDashboard" />
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.ECockpitDashboard.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Black background -->
+        <item name="android:windowBackground">@android:color/black</item>
+        <!-- Hide the action bar -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <!-- Optional: Center the content -->
+        <item name="android:windowContentOverlay">@android:color/black</item>
+    </style>
 </resources>

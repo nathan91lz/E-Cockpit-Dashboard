@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
 
+<!--text : mac address -->
     <TextView
         android:id="@+id/txtAddressMac"
         android:layout_width="wrap_content"
@@ -15,11 +16,12 @@
         android:text="MAC Address :"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintHorizontal_bias="0.201"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.125" />
+        app:layout_constraintVertical_bias="0.13" />
 
+<!--text : state BT -->
     <TextView
         android:id="@+id/txtEtatBt"
         android:layout_width="wrap_content"
@@ -32,6 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.057" />
 
+<!--image : red circle -->
     <ImageView
         android:id="@+id/imgBtIndicator"
         android:layout_width="22dp"
@@ -44,17 +47,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.053" />
 
+<!--button : refresh -->
     <Button
         android:id="@+id/bpRefresh"
-        android:layout_width="139dp"
-        android:layout_height="47dp"
+        android:layout_width="155dp"
+        android:layout_height="52dp"
         android:text="Refresh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.235"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintVertical_bias="0.055" />
+
+<!--button : go to e cockpit fragment -->
+    <Button
+        android:id="@+id/bpGotoCockpit"
+        android:layout_width="144dp"
+        android:layout_height="72dp"
+        android:text="E-Cockpit Dashboard"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.334" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
