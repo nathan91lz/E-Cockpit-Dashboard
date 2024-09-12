@@ -35,6 +35,10 @@
             android:name=".MainActivity"
             android:exported="true">
         </activity>
+
+<!--        fragment e-cockpit layout-->
+        <activity android:name=".ECockpitDashboardActivity" />
+
     </application>
 
 </manifest>
