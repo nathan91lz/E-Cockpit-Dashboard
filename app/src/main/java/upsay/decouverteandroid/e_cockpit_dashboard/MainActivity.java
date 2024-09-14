@@ -1,27 +1,26 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
 
 // used for wainting second
 import android.os.Handler;
 import android.os.Looper;
 
 public class MainActivity extends AppCompatActivity {
+    private Button gotoECockpitFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,20 +33,21 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-    //  setup is set
 
         ImageView imgBtIndicator = findViewById(R.id.imgBtIndicator);
         Button refreshButton = findViewById(R.id.bpRefresh);
         TextView txtEtatBt = findViewById(R.id.txtEtatBt);
         TextView txtAddressMac = findViewById(R.id.txtAddressMac);
+        TextView txtAddressMacOwn = findViewById(R.id.txtAddressMacOwn);
+        gotoECockpitFragment = findViewById(R.id.bpGotoCockpit);
 
-        // check BT device and get Mac address
+        // Check BT device and get Mac address
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 refreshButton.setText("Searching ...");
 
-                // delay the MAC address check and UI update by 1 second
+                // Delay the MAC address check and UI update by 1 second
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -61,24 +61,30 @@ public class MainActivity extends AppCompatActivity {
                             txtEtatBt.setText("Not connected");
                             txtAddressMac.setText("MAC Address: ");
                             refreshButton.setText("Refresh");
-                            return;
+
+                            // Hide the button if no device is connected
+                            gotoECockpitFragment.setVisibility(View.GONE);
                         } else {
                             imgBtIndicator.setImageResource(R.drawable.green_circle);
                             txtEtatBt.setText("Connected");
                             txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
 
                             refreshButton.setText("Found");
+
+                            // Show the button if a device is connected
+                            gotoECockpitFragment.setVisibility(View.VISIBLE);
                         }
+
+                        String ownMacAddress = Bluetooth.getOwnMacAddres();
+                        txtAddressMacOwn.setText("Your Bluetooth MAC Address: " + ownMacAddress);
+
                         refreshButton.setText("Refresh");
                     }
-                }, 1000);  // Delay of 1 second
+                }, 200);  // delay of 1 second
             }
         });
 
-
-        Button gotoECockpitFragment = findViewById(R.id.bpGotoCockpit);
-
-        // setup fragment page : e-cockpit
+        // Setup fragment page: e-cockpit
         gotoECockpitFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +93,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // Initial check to set the visibility of the button on activity start
+        checkDeviceConnection();
     }
+
+    private void checkDeviceConnection() {
+        String macAddress = Bluetooth.getConnectedDeviceMac();
+        if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+            gotoECockpitFragment.setVisibility(View.GONE);
+        } else {
+            gotoECockpitFragment.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+
+
+
+
+
 }

@@ -1,12 +1,22 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.widget.TextView;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,7 +40,7 @@ public class Bluetooth {
             return "Bluetooth not enabled or not supported";
         }
 
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
 
         // iterate over paired devices to find connected device
         for (BluetoothDevice device : pairedDevices) {
@@ -42,6 +52,7 @@ public class Bluetooth {
     }
 
     // function get device name
+    @SuppressLint("MissingPermission")
     public static String getConnectedDeviceName() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -51,7 +62,7 @@ public class Bluetooth {
         }
 
 
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
 
         // iterate over paired devices to find connected device
         for (BluetoothDevice device : pairedDevices) {
@@ -64,6 +75,7 @@ public class Bluetooth {
 
 
     // connection to the Bluetooth device using MAC address
+    @SuppressLint("MissingPermission")
     public void connect(String macAddress) throws IOException {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
@@ -89,13 +101,13 @@ public class Bluetooth {
     }
 
     // Send an AT command to the device
-    private void sendATCommand(String command) throws IOException {
+    public void sendATCommand(String command) throws IOException {
         outputStream.write(command.getBytes());
     }
 
     // Read the response from the OBD-II device
     public String readResponse() throws IOException {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[32]; // HERE PROBLEM CRASH
         int bytes = inputStream.read(buffer);
         return new String(buffer, 0, bytes);
     }
@@ -127,6 +139,47 @@ public class Bluetooth {
         inputStream.close();
         outputStream.close();
         socket.close();
+    }
+
+
+    // get own mac address
+    public static String getOwnMacAddres() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
+
+
+//        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//        String wifiMacAddress = wimanager.getConnectionInfo().getMacAddress();
+//        if (wifiMacAddress == null) {
+//            wifiMacAddress = "Device don't have mac address or wi-fi is disabled";
+//        }
+//
+//        return wifiMacAddress;
+
+//        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        String ownMacAddress = bluetoothAdapter != null ? bluetoothAdapter.getAddress() : "Unavailable";
+//        return ownMacAddress;
     }
 
 }

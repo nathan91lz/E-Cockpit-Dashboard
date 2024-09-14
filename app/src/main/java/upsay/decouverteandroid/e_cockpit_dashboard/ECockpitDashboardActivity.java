@@ -37,7 +37,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         String deviceName = Bluetooth.getConnectedDeviceName();
 
         // try to connect to the OBDII device using the MAC address
-        if (deviceName.equals("OBDII")) {
+        //if (deviceName.equals("OBDII")) {
+        if (deviceName.equals("MacBook Air")) { //use for dev with fake obd with python
             if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
                 try {
                     bluetooth.connect(macAddress);
@@ -45,7 +46,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show();
 
                     // start requesting RPM data in a loop
-                    startRPMRequestLoop();
+                    //startRPMRequestLoop();
+
+                    bluetooth.sendATCommand("010C\r");
+                    bluetooth.readResponse();
 
                 } catch (IOException e) {
                     e.printStackTrace();
