@@ -107,7 +107,7 @@ public class Bluetooth {
 
     // Read the response from the OBD-II device
     public String readResponse() throws IOException {
-        byte[] buffer = new byte[32]; // HERE PROBLEM CRASH
+        byte[] buffer = new byte[32]; // HERE PROBLEM CRASH help
         int bytes = inputStream.read(buffer);
         return new String(buffer, 0, bytes);
     }
