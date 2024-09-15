@@ -20,7 +20,7 @@ import ctypes
 import os
 
 # Path to virtual serial port
-port = '/dev/ttys007'   # Virtual port number
+port = '/dev/ttys009'   # Virtual port number
 baudrate = 9600
 
 # Load the IOBluetooth framework from the system library (macOS specific)

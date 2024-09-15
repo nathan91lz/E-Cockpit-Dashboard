@@ -5,7 +5,7 @@ import os
 #import subprocess
 
 # Path to virtual serial port
-port = '/dev/ttys001'   # Virtual port number
+port = '/dev/ttys009'   # Virtual port number
 baudrate = 9600
 
 # Load the IOBluetooth framework from the system library (macOS specific)
@@ -32,7 +32,7 @@ def check_bluetooth_connection():
 
 # Simulate the OBD-II device
 def simulate_obd_device():
-    ser = serial.Serial(port, baudrate=baudrate, timeout=1)
+    ser = serial.Serial(port, baudrate=baudrate, timeout=5)
     print(f"Simulating OBD-II device on {port}")
 
     while True:
