@@ -17,6 +17,7 @@ import java.io.IOException;
 import android.util.Log;
 
 
+
 public class ECockpitDashboardActivity extends AppCompatActivity {
     private Bluetooth bluetooth;
     private Handler handler;
@@ -25,6 +26,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private TextView txtRPM;
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
+
 
     private static final String TAG = "ECockpitDashboard";
 
