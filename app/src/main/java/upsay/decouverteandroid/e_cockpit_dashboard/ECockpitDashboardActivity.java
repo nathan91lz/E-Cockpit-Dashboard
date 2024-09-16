@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
+import android.util.Log;
+
 
 public class ECockpitDashboardActivity extends AppCompatActivity {
     private Bluetooth bluetooth;
@@ -21,6 +23,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private boolean isRequestingRPM = false;
     private Button bpGotoMain;
     private TextView txtRPM;
+    public String macAddress = Bluetooth.macAddress;
+    public String deviceName = Bluetooth.deviceName;
+
+    private static final String TAG = "ECockpitDashboard";
 
     @Override
 
@@ -30,10 +36,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 //
 //        setContentView(R.layout.activity_e_cockpit_dashboard);
 //
-//        //Button cancelButton = findViewById(R.id.bpGotoMain);
-//        //cancelButton.setOnClickListener(v -> finish());
+//        Button cancelButton = findViewById(R.id.bpGotoMain);
+//        cancelButton.setOnClickListener(v -> finish());
 //
 //    }
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +52,13 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         bluetooth = new Bluetooth();
         handler = new Handler(Looper.getMainLooper());
 
-        String macAddress = Bluetooth.getConnectedDeviceMac();
-        String deviceName = Bluetooth.getConnectedDeviceName();
+        Log.i(TAG, "MAC address is :" + macAddress);
+        Log.i(TAG, "Device name is :" + deviceName);
+
 
         // try to connect to the OBDII device using the MAC address
-        if (deviceName.equals("OBDII")) { //use for dev with fake obd with python
+        //if (deviceName.equals("OBDII")) {
+        if (deviceName != null && deviceName.equals("MockedOBDII")) { // UESED WITHOUT ANDROID TAB
             if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
                 try {
                     bluetooth.connect(macAddress);
@@ -70,7 +79,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 txtRPM.setText("Error MAC Address : " + macAddress);  // Display error if no device found or Bluetooth issue
             }
         } else {
-            txtRPM.setText("Connected device is not OBDII");  // Display message if the device is not "OBDII"
+            txtRPM.setText("Connected device is not OBDII");  // display message if the device is not "OBDII"
         }
 
         // stop RPM requests when bpGotoMain button is pressed and finish the activity

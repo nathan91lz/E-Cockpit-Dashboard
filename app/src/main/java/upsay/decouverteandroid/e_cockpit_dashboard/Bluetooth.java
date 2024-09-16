@@ -9,6 +9,7 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.util.Log;
 import android.widget.TextView;
 import androidx.fragment.app.FragmentManager;
 
@@ -23,8 +24,8 @@ import java.util.UUID;
 
 
 public class Bluetooth {
-    private static String bluetoothDeviceName;
-    private static String bluetoothDeviceMacAddress;
+    public static String macAddress;
+    public static String deviceName;
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
@@ -33,46 +34,62 @@ public class Bluetooth {
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+
+
+
+    // DEBUG MODE ! MAC ADDRESS FAKED
     // function to get the MAC address of the currently connected Bluetooth device
+//    public static String getConnectedDeviceMac() {
+//        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        // check if Bluetooth is supported and enabled
+//        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+//            return "Bluetooth not enabled or not supported";
+//        }
+//
+//        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+//
+//        // iterate over paired devices to find connected device
+//        for (BluetoothDevice device : pairedDevices) {
+//            macAddress = device.getAddress();
+//            return macAddress;
+//        }
+//
+//        return "No connected Bluetooth device found";
+//    }
     public static String getConnectedDeviceMac() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        macAddress = "CC:A2:19:B6:10:72";
 
-        // check if Bluetooth is supported and enabled
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-            return "Bluetooth not enabled or not supported";
-        }
-
-        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-
-        // iterate over paired devices to find connected device
-        for (BluetoothDevice device : pairedDevices) {
-            bluetoothDeviceMacAddress = device.getAddress();
-            return bluetoothDeviceMacAddress;
-        }
-
-        return "No connected Bluetooth device found";
+        return macAddress;
     }
 
+    // DEBUG MODE ! DEVICE NAME FAKED
     // function get device name
-    @SuppressLint("MissingPermission")
+//    @SuppressLint("MissingPermission")
+//    public static String getConnectedDeviceName() {
+//        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        // Ensure Bluetooth is supported and enabled
+//        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+//            return "Bluetooth not enabled or not supported";
+//        }
+//
+//
+//        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+//
+//        // iterate over paired devices to find connected device
+//        for (BluetoothDevice device : pairedDevices) {
+//            // Return the name of the first paired device
+//            deviceName = device.getName();
+//
+//            return deviceName;
+//        }
+//        return "No connected Bluetooth device found";
+//    }
     public static String getConnectedDeviceName() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        deviceName = "OBDII";
 
-        // Ensure Bluetooth is supported and enabled
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-            return "Bluetooth not enabled or not supported";
-        }
-
-
-        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-
-        // iterate over paired devices to find connected device
-        for (BluetoothDevice device : pairedDevices) {
-            // Return the name of the first paired device
-            bluetoothDeviceName = device.getName();
-            return bluetoothDeviceName;
-        }
-        return "No connected Bluetooth device found";
+        return deviceName;
     }
 
 
