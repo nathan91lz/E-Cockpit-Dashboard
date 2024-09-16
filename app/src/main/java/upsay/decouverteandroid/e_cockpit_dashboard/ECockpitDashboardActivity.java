@@ -56,7 +56,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         Log.i(TAG, "Device name is :" + deviceName);
 
 
+
         // try to connect to the OBDII device using the MAC address
+        // DEGUG UNCOMMENT LINE :
         //if (deviceName.equals("OBDII")) {
         if (deviceName != null && deviceName.equals("MockedOBDII")) { // UESED WITHOUT ANDROID TAB
             if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
@@ -76,7 +78,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     txtRPM.setText("Error connecting to device");
                 }
             } else {
-                txtRPM.setText("Error MAC Address : " + macAddress);  // Display error if no device found or Bluetooth issue
+                txtRPM.setText("Error MAC Address : " + macAddress);  // display error if no device found or Bluetooth issue
             }
         } else {
             txtRPM.setText("Connected device is not OBDII");  // display message if the device is not "OBDII"
