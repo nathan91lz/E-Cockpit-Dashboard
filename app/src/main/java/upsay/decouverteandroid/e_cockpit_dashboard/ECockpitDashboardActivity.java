@@ -23,6 +23,18 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private TextView txtRPM;
 
     @Override
+
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_e_cockpit_dashboard);
+//
+//        setContentView(R.layout.activity_e_cockpit_dashboard);
+//
+//        //Button cancelButton = findViewById(R.id.bpGotoMain);
+//        //cancelButton.setOnClickListener(v -> finish());
+//
+//    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_cockpit_dashboard);
@@ -37,8 +49,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         String deviceName = Bluetooth.getConnectedDeviceName();
 
         // try to connect to the OBDII device using the MAC address
-        //if (deviceName.equals("OBDII")) {
-        if (deviceName.equals("MacBook Air")) { //use for dev with fake obd with python
+        if (deviceName.equals("OBDII")) { //use for dev with fake obd with python
             if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
                 try {
                     bluetooth.connect(macAddress);
@@ -49,7 +60,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     //startRPMRequestLoop();
 
                     bluetooth.sendATCommand("010C\r");
-                    bluetooth.readResponse();
+                    //bluetooth.readResponse();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -65,10 +76,12 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         // stop RPM requests when bpGotoMain button is pressed and finish the activity
         bpGotoMain.setOnClickListener(v -> {
             stopRPMRequestLoop();
-            try {
-                bluetooth.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (bluetooth != null) {
+                try {
+                    bluetooth.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             finish();  // close the activity
         });
@@ -98,25 +111,31 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     // send the RPM request to the OBD device and update the UI
     private void requestRPMData() {
         try {
-            bluetooth.requestRPM();  // Send the RPM request command
-            String response = bluetooth.readResponse();  // Read the response from the OBD device
+            if (bluetooth != null) {
+                bluetooth.requestRPM();  // send the RPM request command
+                String response = bluetooth.readResponse();  // read the response from the OBD device
 
-            if (response == null || response.isEmpty()) {
-                txtRPM.setText("ERROR");
-                return;
-            }
+                if (response == null || response.isEmpty()) {
+                    txtRPM.setText("ERROR");
+                    return;
+                }
 
-            int rpm = bluetooth.processRPMResponse(response);  // Process the response to get RPM
-            if (rpm == -1) {
-                txtRPM.setText("ERROR");
+                int rpm = bluetooth.processRPMResponse(response);  // process the response to get RPM
+                if (rpm == -1) {
+                    txtRPM.setText("ERROR");
+                } else {
+                    txtRPM.setText(String.valueOf(rpm));  // display the RPM value
+                }
             } else {
-                txtRPM.setText(String.valueOf(rpm));  // Display the RPM value
+                txtRPM.setText("Bluetooth object is null");
             }
         } catch (IOException e) {
             e.printStackTrace();
             txtRPM.setText("ERROR");
         }
     }
+
+
 
 
 

@@ -10,6 +10,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.widget.TextView;
+import androidx.fragment.app.FragmentManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ public class Bluetooth {
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
+
 
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -88,31 +90,31 @@ public class Bluetooth {
         inputStream = socket.getInputStream();
     }
 
-    // Send AT command to initialize the OBD-II connection
+    // send AT command to initialize the OBD-II connection
     public void initializeConnection() throws IOException {
         sendATCommand("ATZ\r");
         sendATCommand("ATE0\r");
         sendATCommand("ATL0\r");
     }
 
-    // Send AT command to request RPM
+    // send AT command to request RPM
     public void requestRPM() throws IOException {
         sendATCommand("010C\r");
     }
 
-    // Send an AT command to the device
+    // send an AT command to the device
     public void sendATCommand(String command) throws IOException {
         outputStream.write(command.getBytes());
     }
 
-    // Read the response from the OBD-II device
+    // read the response from the OBD-II device
     public String readResponse() throws IOException {
         byte[] buffer = new byte[32]; // HERE PROBLEM CRASH test
         int bytes = inputStream.read(buffer);
         return new String(buffer, 0, bytes);
     }
 
-    // Process the response to extract RPM
+    // process the response to extract RPM
     public int processRPMResponse(String response) {
         if (response.contains("41 0C")) {
             try {
@@ -134,11 +136,21 @@ public class Bluetooth {
         return -1; // Return -1 if '41 0C' not found
     }
 
-    // Close the Bluetooth connection
+    // close the Bluetooth connection
     public void disconnect() throws IOException {
-        inputStream.close();
-        outputStream.close();
-        socket.close();
+        // check if inputStream is not null before closing it
+        if (inputStream != null) {
+            inputStream.close();
+            inputStream = null; // reset to null after closing
+        }
+        if (outputStream != null) {
+            outputStream.close();
+            outputStream = null;
+        }
+        if (socket != null) {
+            socket.close();
+            socket = null;
+        }
     }
 
 

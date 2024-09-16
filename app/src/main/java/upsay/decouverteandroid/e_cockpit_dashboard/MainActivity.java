@@ -21,6 +21,13 @@ import android.os.Looper;
 
 public class MainActivity extends AppCompatActivity {
     private Button gotoECockpitFragment;
+    //public String macAddress = Bluetooth.getConnectedDeviceMac();
+    //public String deviceName = Bluetooth.getConnectedDeviceName();
+
+    // used for debug :
+    public String macAddress = "CC:A2:19:B6:10:72";
+    public String deviceName = "OBDII";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        String macAddress = Bluetooth.getConnectedDeviceMac();
-                        String deviceName = Bluetooth.getConnectedDeviceName();
+//                        String macAddress = Bluetooth.getConnectedDeviceMac();
+//                        String deviceName = Bluetooth.getConnectedDeviceName();
+
 
                         if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
                             // Optional: You could reset the button text back to default here
