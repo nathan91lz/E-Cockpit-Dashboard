@@ -17,9 +17,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url = uri("https://www.jitpack.io") // In Kotlin DSL, use 'uri' for URL
-        }
     }
 }
 

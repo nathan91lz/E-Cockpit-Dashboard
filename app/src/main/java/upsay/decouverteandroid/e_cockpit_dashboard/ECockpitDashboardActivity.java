@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,20 +29,14 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     public String deviceName = Bluetooth.deviceName;
 
 
+    private int RPM;
+
+
+
     private static final String TAG = "ECockpitDashboard";
 
     @Override
 
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_e_cockpit_dashboard);
-//
-//        setContentView(R.layout.activity_e_cockpit_dashboard);
-//
-//        Button cancelButton = findViewById(R.id.bpGotoMain);
-//        cancelButton.setOnClickListener(v -> finish());
-//
-//    }
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +51,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
+
+
+
 
 
 
@@ -147,6 +145,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             txtRPM.setText("ERROR");
         }
     }
+
 
 
 
