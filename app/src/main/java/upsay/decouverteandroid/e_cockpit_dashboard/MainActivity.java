@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public String deviceName = Bluetooth.deviceName;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +76,12 @@ public class MainActivity extends AppCompatActivity {
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            String macAddress = Bluetooth.getConnectedDeviceMac();
-                            String deviceName = Bluetooth.getConnectedDeviceName();
+//                            String macAddress = Bluetooth.getConnectedDeviceMac();
+//                            String deviceName = Bluetooth.getConnectedDeviceName();
+                            // USED WITH ARDUINO BT FAKE
+                            //String macAddress = Bluetooth.getConnectedDeviceMacFromMacAddress(Bluetooth.macAddressFake);
+                            //String deviceName = Bluetooth.getConnectedDeviceNameFromMacAddress(Bluetooth.macAddressFake);
+
 
 
                             if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {

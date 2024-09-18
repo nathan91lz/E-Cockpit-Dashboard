@@ -24,12 +24,13 @@ import java.util.UUID;
 
 
 public class Bluetooth {
-    public static String macAddress;
-    public static String deviceName;
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
 
+    public static String macAddressFake = "68:5E:1C:5A:8B:CB";
+    public static String macAddress = getConnectedDeviceMacFromMacAddress(macAddressFake);
+    public static String deviceName = getConnectedDeviceNameFromMacAddress(macAddressFake);
 
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -39,58 +40,103 @@ public class Bluetooth {
 
     // DEBUG MODE ! MAC ADDRESS FAKED
     // function to get the MAC address of the currently connected Bluetooth device
-//    public static String getConnectedDeviceMac() {
-//        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//
-//        // check if Bluetooth is supported and enabled
-//        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-//            return "Bluetooth not enabled or not supported";
-//        }
-//
-//        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-//
-//        // iterate over paired devices to find connected device
-//        for (BluetoothDevice device : pairedDevices) {
-//            macAddress = device.getAddress();
-//            return macAddress;
-//        }
-//
-//        return "No connected Bluetooth device found";
-//    }
     public static String getConnectedDeviceMac() {
-        macAddress = "CC:A2:19:B6:10:72";
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        return macAddress;
+        // check if Bluetooth is supported and enabled
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            return "Bluetooth not enabled or not supported";
+        }
+
+        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        // iterate over paired devices to find connected device
+        for (BluetoothDevice device : pairedDevices) {
+            macAddress = device.getAddress();
+            return macAddress;
+        }
+
+        return "No connected Bluetooth device found";
     }
+
+    // Used for BLE
+    public static String getConnectedDeviceMacFromMacAddress(String macAddress) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Check if Bluetooth is supported and enabled
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            return "Bluetooth not enabled or not supported";
+        }
+
+        // Retrieve the device based on the provided MAC address
+        @SuppressLint("MissingPermission")
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+
+        if (device != null) {
+            return macAddress;  // Return the provided MAC address
+        }
+
+        return "No connected Bluetooth device found";
+    }
+
+//    public static String getConnectedDeviceMac() {
+//        macAddress = "CC:A2:19:B6:10:72"; //OBD mac address
+//        macAddress = "68:5E:1C:5A:8B:CB"; // HM10 fakeArduino
+//
+//        return macAddress;
+//    }
 
     // DEBUG MODE ! DEVICE NAME FAKED
     // function get device name
-//    @SuppressLint("MissingPermission")
-//    public static String getConnectedDeviceName() {
-//        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//
-//        // Ensure Bluetooth is supported and enabled
-//        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
-//            return "Bluetooth not enabled or not supported";
-//        }
-//
-//
-//        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-//
-//        // iterate over paired devices to find connected device
-//        for (BluetoothDevice device : pairedDevices) {
-//            // Return the name of the first paired device
-//            deviceName = device.getName();
-//
-//            return deviceName;
-//        }
-//        return "No connected Bluetooth device found";
-//    }
+    @SuppressLint("MissingPermission")
     public static String getConnectedDeviceName() {
-        deviceName = "OBDII";
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        return deviceName;
+        // Ensure Bluetooth is supported and enabled
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            return "Bluetooth not enabled or not supported";
+        }
+
+
+        @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        // iterate over paired devices to find connected device
+        for (BluetoothDevice device : pairedDevices) {
+            // Return the name of the first paired device
+            deviceName = device.getName();
+
+            return deviceName;
+        }
+        return "No connected Bluetooth device found";
     }
+//    public static String getConnectedDeviceName() {
+////        deviceName = "OBDII";
+//        deviceName = "FakeArduinoBt";
+//
+//        return deviceName;
+//    }
+
+    // used for BLE
+    @SuppressLint("MissingPermission")
+    public static String getConnectedDeviceNameFromMacAddress(String macAddress) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Ensure Bluetooth is supported and enabled
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            return "Bluetooth not enabled or not supported";
+        }
+
+        // Retrieve the device by its MAC address
+        @SuppressLint("MissingPermission")
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+
+        if (device != null) {
+            return device.getName();  // Return the name of the device
+        }
+
+        return "No connected Bluetooth device found";
+    }
+
 
 
     // connection to the Bluetooth device using MAC address

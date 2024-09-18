@@ -43,46 +43,40 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_cockpit_dashboard);
 
+        Log.i(TAG, "MAC address is :" + macAddress);
+        Log.i(TAG, "Device name is :" + deviceName);
+
         bpGotoMain = findViewById(R.id.bpGotoMain);
         txtRPM = findViewById(R.id.txtRPM);
 
         bluetooth = new Bluetooth();
         handler = new Handler(Looper.getMainLooper());
 
-        Log.i(TAG, "MAC address is :" + macAddress);
-        Log.i(TAG, "Device name is :" + deviceName);
-
-
-
-
-
 
         // try to connect to the OBDII device using the MAC address
         // DEGUG UNCOMMENT LINE :
-        //if (deviceName.equals("OBDII")) {
-        if (deviceName != null && deviceName.equals("MockedOBDII")) { // UESED WITHOUT ANDROID TAB
-            if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
-                try {
-                    bluetooth.connect(macAddress);
-                    bluetooth.initializeConnection();  // send initialization commands to the OBD device
-                    Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show();
+        if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
+            try {
+                bluetooth.connect(macAddress);
+                //bluetooth.initializeConnection();  // send initialization commands to the OBD device
+                Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show();
 
-                    // start requesting RPM data in a loop
-                    //startRPMRequestLoop();
+                // start requesting RPM data in a loop
+                //startRPMRequestLoop();
 
-                    bluetooth.sendATCommand("010C\r");
-                    //bluetooth.readResponse();
+                //bluetooth.sendATCommand("010C\r");
+                Log.i(TAG, "AT command sent");
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    txtRPM.setText("Error connecting to device");
-                }
-            } else {
-                txtRPM.setText("Error MAC Address : " + macAddress);  // display error if no device found or Bluetooth issue
+                //bluetooth.readResponse();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                txtRPM.setText("Error connecting to device");
             }
         } else {
-            txtRPM.setText("Connected device is not OBDII");  // display message if the device is not "OBDII"
+            txtRPM.setText("Error MAC Address : " + macAddress);  // display error if no device found or Bluetooth issue
         }
+
 
         // stop RPM requests when bpGotoMain button is pressed and finish the activity
         bpGotoMain.setOnClickListener(v -> {
