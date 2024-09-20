@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                                 // Optional: You could reset the button text back to default here
                                 refreshButton.setText("Not found");
                                 imgBtIndicator.setImageResource(R.drawable.red_circle);
-                                txtEtatBt.setText("Not connected");
+                                txtEtatBt.setText("Not paired");
                                 txtAddressMac.setText("MAC Address: ");
                                 refreshButton.setText("Refresh");
 
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                                 gotoECockpitFragment.setVisibility(View.GONE);
                             } else {
                                 imgBtIndicator.setImageResource(R.drawable.green_circle);
-                                txtEtatBt.setText("Connected");
+                                txtEtatBt.setText("Paired");
                                 txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
 
                                 refreshButton.setText("Found");

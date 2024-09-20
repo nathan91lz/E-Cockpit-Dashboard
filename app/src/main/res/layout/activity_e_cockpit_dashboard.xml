@@ -35,7 +35,17 @@
         gauge:layout_constraintTop_toTopOf="parent"
         gauge:layout_constraintVertical_bias="0.179" />
 
-
+    <TextView
+        android:id="@+id/txtRPMDebug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RPM debug : "
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.169"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtRPM"
+        gauge:layout_constraintVertical_bias="0.078" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

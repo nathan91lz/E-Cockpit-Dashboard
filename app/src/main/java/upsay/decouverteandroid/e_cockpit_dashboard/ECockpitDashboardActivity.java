@@ -25,11 +25,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private boolean isRequestingRPM = false;
     private Button bpGotoMain;
     private TextView txtRPM;
+    private TextView txtRPMDebug;
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
-
-    private int RPM;
 
 
 
@@ -63,9 +62,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                 //startRPMRequestLoop();
 
-                requestRPMData();
+                //requestRPMData();
                 //bluetooth.sendATCommand("010C\r");
                 Log.i(TAG, "AT command sent");
+
+                startRPMRequestLoop();
 
 
                 //bluetooth.readResponse();
@@ -85,6 +86,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             if (bluetooth != null) {
                 try {
                     bluetooth.disconnect();
+                    Toast.makeText(this, "OBDII device disconnected", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -96,17 +98,34 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     // start a loop to request RPM data every second
     private void startRPMRequestLoop() {
         isRequestingRPM = true;
+
         Runnable rpmRequestTask = new Runnable() {
             @Override
             public void run() {
                 if (isRequestingRPM) {
-                    requestRPMData();  // Request and display RPM
-                    handler.postDelayed(this, 1000);  // repeat every 1 second
+                    try {
+                        // Request and process RPM data
+                        requestRPMData();
+                        Log.i(TAG, "Request ongoing...");
+
+                        // Schedule the next execution after 1 second
+                        handler.postDelayed(this, 1000);
+                    } catch (Exception e) {
+                        // Log the error and display a message on the UI
+                        Log.e(TAG, "Error during RPM request", e);
+                        runOnUiThread(() -> txtRPM.setText("Error retrieving RPM"));
+
+                        // Optionally, stop the loop on failure
+                        stopRPMRequestLoop();
+                    }
                 }
             }
         };
-        handler.post(rpmRequestTask);  // start the task
+
+        // Start the task for the first time
+        handler.post(rpmRequestTask);
     }
+
 
     // stop the loop for requesting RPM data
     private void stopRPMRequestLoop() {
@@ -121,14 +140,24 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 bluetooth.requestRPM();  // send the RPM request command
                 String response = bluetooth.readResponse();  // read the response from the OBD device
 
+                try {
+                    Thread.sleep(200); // adjust the delay as necessary (200ms here)
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //txtRPMDebug.setText(response);
+                Log.i(TAG, "Response : " + response);
+
                 if (response == null || response.isEmpty()) {
-                    txtRPM.setText("ERROR");
+                    txtRPM.setText("ERROR, empty reponse");
                     return;
                 }
 
                 int rpm = bluetooth.processRPMResponse(response);  // process the response to get RPM
                 if (rpm == -1) {
-                    txtRPM.setText("ERROR");
+                    txtRPM.setText("ERROR RPM value");
+                    Log.w(TAG, "RPM value :" + String.valueOf(rpm));
                 } else {
                     txtRPM.setText("RPM : " + String.valueOf(rpm));  // display the RPM value
                 }

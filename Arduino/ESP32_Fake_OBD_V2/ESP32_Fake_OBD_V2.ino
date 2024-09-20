@@ -7,6 +7,15 @@ int rpmIncrement = 100;        // Increment RPM by 100
 unsigned long previousMillis = 0;  // To track time intervals
 const long interval = 500;     // 500 ms interval for RPM update
 
+// Function to pad the hex string to always be 2 characters long
+String padHex(int value) {
+  String hexString = String(value, HEX);
+  if (hexString.length() < 2) {
+    hexString = "0" + hexString;  // Add leading zero if necessary
+  }
+  return hexString;
+}
+
 void setup() {
   Serial.begin(115200);        // Start Serial Monitor for debugging
   SerialBT.begin("ESP32_OBD"); // Start Bluetooth and set name to ESP32_OBD
@@ -37,7 +46,10 @@ void loop() {
       if (command == "010C") {  // Request for RPM
         int A = rpm / 256;      // First byte of the RPM response
         int B = rpm % 256;      // Second byte of the RPM response
-        String response = "41 0C " + String(A, HEX) + " " + String(B, HEX);  // Form the response
+        
+        // Ensure that the hex output is always two digits by padding with zeros
+        String response = "41 0C " + padHex(A) + " " + padHex(B);  
+        
         SerialBT.println(response);  // Send simulated RPM response
         Serial.println("Sent RPM: " + String(rpm));  // Debug print
       } 

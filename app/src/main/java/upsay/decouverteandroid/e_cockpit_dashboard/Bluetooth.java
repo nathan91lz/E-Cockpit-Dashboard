@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.TextView;
 import androidx.fragment.app.FragmentManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -173,11 +174,62 @@ public class Bluetooth {
     }
 
     // read the response from the OBD-II device
+    /*
+    public String readResponse() throws IOException {
+    ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1]; // Read one byte at a time
+    StringBuilder responseBuilder = new StringBuilder();
+
+    boolean foundPrefix = false;
+    long startTime = System.currentTimeMillis();  // Track start time
+    int maxReadAttempts = 5000;  // Maximum attempts to read (adjust as needed)
+    int attemptCount = 0;
+
+    while (attemptCount < maxReadAttempts) {
+        int bytesRead = inputStream.read(buffer);
+
+        if (bytesRead != -1) {
+            // Convert byte to hex and append to the response
+            String hexValue = String.format("%02X", buffer[0]);
+            responseBuilder.append(hexValue).append(" ");
+
+            // Keep track of the response
+            String response = responseBuilder.toString();
+
+            // Check if the response contains '41 0C'
+            if (response.contains("41 0C")) {
+                foundPrefix = true;
+            }
+
+            // If '41 0C' is found, capture the next 4 hex values (8 characters)
+            if (foundPrefix && response.length() >= 11 + (8 + 3)) {
+                return response.trim();
+            }
+        } else {
+            // Handle end of stream
+            break;
+        }
+
+        // Avoid infinite loops by introducing a timeout (e.g., 5 seconds)
+        if (System.currentTimeMillis() - startTime > 5000) {
+            throw new IOException("Timeout while reading response");
+        }
+
+        attemptCount++;
+    }
+
+    throw new IOException("Unable to read valid response");
+}
+
+     */
+
     public String readResponse() throws IOException {
         byte[] buffer = new byte[32]; // HERE PROBLEM CRASH test
         int bytes = inputStream.read(buffer);
         return new String(buffer, 0, bytes);
     }
+
+
 
     // process the response to extract RPM
     public int processRPMResponse(String response) {
@@ -198,7 +250,7 @@ public class Bluetooth {
                 return -1; // Return -1 on error
             }
         }
-        return -1; // Return -1 if '41 0C' not found
+        return -2; // Return -1 if '41 0C' not found
     }
 
     // close the Bluetooth connection
