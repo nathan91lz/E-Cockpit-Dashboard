@@ -18,7 +18,7 @@ String padHex(int value) {
 
 void setup() {
   Serial.begin(115200);        // Start Serial Monitor for debugging
-  SerialBT.begin("ESP32_OBD"); // Start Bluetooth and set name to ESP32_OBD
+  SerialBT.begin("OBD2_Fake"); // Start Bluetooth and set name to ESP32_OBD
   Serial.println("ESP32 OBD-II Emulator started");
 }
 
@@ -44,8 +44,10 @@ void loop() {
 
       // Respond to the specific OBD-II command
       if (command == "010C") {  // Request for RPM
-        int A = rpm / 256;      // First byte of the RPM response
-        int B = rpm % 256;      // Second byte of the RPM response
+
+        int scaledRPM = rpm * 4;  // Multiply the RPM to get the right OBD-II scaling
+        int A = scaledRPM / 256;  // First byte of the RPM response
+        int B = scaledRPM % 256;  // Second byte of the RPM response
         
         // Ensure that the hex output is always two digits by padding with zeros
         String response = "41 0C " + padHex(A) + " " + padHex(B);  
