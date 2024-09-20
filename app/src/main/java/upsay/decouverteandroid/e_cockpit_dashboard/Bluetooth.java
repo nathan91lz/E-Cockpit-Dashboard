@@ -27,10 +27,12 @@ public class Bluetooth {
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
+    public static String macAddress = getConnectedDeviceMac();
+    public static String deviceName = getConnectedDeviceName();
 
-    public static String macAddressFake = "68:5E:1C:5A:8B:CB";
-    public static String macAddress = getConnectedDeviceMacFromMacAddress(macAddressFake);
-    public static String deviceName = getConnectedDeviceNameFromMacAddress(macAddressFake);
+    //public static String macAddressFake = "68:5E:1C:5A:8B:CB";
+    //public static String macAddress = getConnectedDeviceMacFromMacAddress(macAddressFake);
+    //public static String deviceName = getConnectedDeviceNameFromMacAddress(macAddressFake);
 
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");

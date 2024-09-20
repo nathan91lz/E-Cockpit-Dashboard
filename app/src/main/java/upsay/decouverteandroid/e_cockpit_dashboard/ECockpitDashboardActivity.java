@@ -59,13 +59,14 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             try {
                 bluetooth.connect(macAddress);
                 //bluetooth.initializeConnection();  // send initialization commands to the OBD device
-                Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show(); // message on screen
 
-                // start requesting RPM data in a loop
                 //startRPMRequestLoop();
 
+                requestRPMData();
                 //bluetooth.sendATCommand("010C\r");
                 Log.i(TAG, "AT command sent");
+
 
                 //bluetooth.readResponse();
 
@@ -129,7 +130,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 if (rpm == -1) {
                     txtRPM.setText("ERROR");
                 } else {
-                    txtRPM.setText(String.valueOf(rpm));  // display the RPM value
+                    txtRPM.setText("RPM : " + String.valueOf(rpm));  // display the RPM value
                 }
             } else {
                 txtRPM.setText("Bluetooth object is null");

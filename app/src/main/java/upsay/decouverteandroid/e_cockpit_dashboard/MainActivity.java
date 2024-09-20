@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
                                 gotoECockpitFragment.setVisibility(View.VISIBLE);
                             }
 
-                            String ownMacAddress = Bluetooth.getOwnMacAddres();
-                            txtAddressMacOwn.setText("Your Bluetooth MAC Address: " + ownMacAddress);
+                            //String ownMacAddress = Bluetooth.getOwnMacAddres();
+                            //txtAddressMacOwn.setText("Your Bluetooth MAC Address: " + ownMacAddress);
 
                             refreshButton.setText("Refresh");
                         }
