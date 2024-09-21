@@ -23,6 +23,7 @@
     <!-- text RPM -->
 
     <!-- RPM Gauge -->
+
     <TextView
         android:id="@+id/txtRPM"
         android:layout_width="wrap_content"
@@ -30,22 +31,36 @@
         android:text="RPM : "
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.154"
+        gauge:layout_constraintHorizontal_bias="0.278"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.179" />
+        gauge:layout_constraintVertical_bias="0.558" />
 
     <TextView
         android:id="@+id/txtRPMDebug"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="RPM debug : "
+        android:visibility="gone"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintHorizontal_bias="0.169"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toBottomOf="@+id/txtRPM"
         gauge:layout_constraintVertical_bias="0.078" />
+
+    <ProgressBar
+        android:id="@+id/rpmLinearGauge"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:max="8000"
+        android:progress="1500"
+        android:progressDrawable="@drawable/rpm_progress"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,7 +29,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
-
+    private ProgressBar rpmGauge;
 
 
     private static final String TAG = "ECockpitDashboard";
@@ -50,6 +50,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         bluetooth = new Bluetooth();
         handler = new Handler(Looper.getMainLooper());
+
+        rpmGauge = findViewById(R.id.rpmLinearGauge);
+
+        rpmGauge.setProgress(1000);
+
 
 
         // try to connect to the OBDII device using the MAC address
@@ -94,6 +99,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             finish();  // close the activity
         });
     }
+
+
+
 
     // start a loop to request RPM data every second
     private void startRPMRequestLoop() {
@@ -160,6 +168,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     Log.w(TAG, "RPM value :" + String.valueOf(rpm));
                 } else {
                     txtRPM.setText("RPM : " + String.valueOf(rpm));  // display the RPM value
+                    rpmGauge.setProgress(rpm);
                 }
             } else {
                 txtRPM.setText("Bluetooth object is null");
