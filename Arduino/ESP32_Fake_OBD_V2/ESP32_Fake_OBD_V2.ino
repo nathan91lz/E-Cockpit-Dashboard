@@ -1,3 +1,5 @@
+// to upload > press 1 or 2s BOOT button during : Connecting ...
+
 #include "BluetoothSerial.h"  
 
 BluetoothSerial SerialBT;

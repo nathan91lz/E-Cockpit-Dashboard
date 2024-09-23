@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "E-Cockpit Dashboard"
 include(":app")
+include(":gauge")
