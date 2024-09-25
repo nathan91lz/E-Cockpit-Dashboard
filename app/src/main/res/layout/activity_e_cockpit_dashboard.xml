@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:gauge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+
     tools:context=".ECockpitDashboardActivity">
 
 
     <!-- button Cancel -->
-    <Button
-        android:id="@+id/bpGotoMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.082"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.98" />
 
     <!-- text RPM -->
 
@@ -28,39 +19,40 @@
         android:id="@+id/txtRPM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RPM : "
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.278"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.558" />
+        android:text="RPM : " />
 
     <TextView
         android:id="@+id/txtRPMDebug"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="RPM debug : "
-        android:visibility="gone"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.169"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toBottomOf="@+id/txtRPM"
-        gauge:layout_constraintVertical_bias="0.078" />
+        android:visibility="gone" />
+
+
+    <Button
+        android:id="@+id/bpGotoMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel" />
 
     <ProgressBar
         android:id="@+id/rpmLinearGauge"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="31dp"
         android:max="8000"
         android:progress="1500"
-        android:progressDrawable="@drawable/rpm_progress"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toTopOf="parent" />
+        android:progressDrawable="@drawable/rpm_progress" />
+
+    <de.nitri.gauge.Gauge
+        android:id="@+id/gauge"
+        android:layout_width="264dp"
+        android:layout_height="269dp"
+        android:layout_gravity="center"
+        gauge:labelTextSize="42"
+        gauge:maxValue="1000"
+        gauge:minValue="0"
+        gauge:totalNicks="120"
+        gauge:valuePerNick="10" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

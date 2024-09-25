@@ -2,3 +2,5 @@
 plugins {
     alias(libs.plugins.android.application) apply false
 }
+//val compileSdkVersion by extra(compileSdkVersion)
+//val buildToolsVersion by extra(buildToolsVersion)

@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
             imgBtIndicator.setImageResource(R.drawable.green_circle);  // Show green circle as connected
             gotoECockpitFragment.setVisibility(View.VISIBLE);
+
         } else {
             // If not on an emulator, check Bluetooth state
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

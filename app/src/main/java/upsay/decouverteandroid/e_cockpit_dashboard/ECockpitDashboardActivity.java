@@ -2,6 +2,7 @@ package upsay.decouverteandroid.e_cockpit_dashboard;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 import android.util.Log;
 
+import de.nitri.gauge.Gauge;
 
 
 public class ECockpitDashboardActivity extends AppCompatActivity {
@@ -31,6 +33,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private ProgressBar rpmGauge;
 
+    final Gauge gauge = (Gauge) findViewById(R.id.gauge);
+
 
     private static final String TAG = "ECockpitDashboard";
 
@@ -44,6 +48,25 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
+
+        gauge.moveToValue(800);
+
+        HandlerThread thread = new HandlerThread("GaugeDemoThread");
+        thread.start();
+        Handler handler = new Handler(thread.getLooper());
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                gauge.moveToValue(300);
+            }
+        }, 2800);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                gauge.moveToValue(550);
+            }
+        }, 5600);
 
         bpGotoMain = findViewById(R.id.bpGotoMain);
         txtRPM = findViewById(R.id.txtRPM);
