@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             txtEtatBt.setText("Connected (Emulator)");
             txtAddressMac.setText("MAC Address: " + mockMacAddress + "\nDevice Name: " + mockDeviceName);
 
-            imgBtIndicator.setImageResource(R.drawable.green_circle);  // Show green circle as connected
+            imgBtIndicator.setImageResource(R.drawable.green_circle);
             gotoECockpitFragment.setVisibility(View.VISIBLE);
 
         } else {

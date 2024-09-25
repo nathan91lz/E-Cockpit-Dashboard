@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import android.util.Log;
 
+
 import de.nitri.gauge.Gauge;
 
 
@@ -33,7 +34,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private ProgressBar rpmGauge;
 
-    final Gauge gauge = (Gauge) findViewById(R.id.gauge);
+    private Gauge gauge;
+    //final Gauge gauge = (Gauge) findViewById(R.id.gauge);
 
 
     private static final String TAG = "ECockpitDashboard";
@@ -49,24 +51,24 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
 
-        gauge.moveToValue(800);
-
-        HandlerThread thread = new HandlerThread("GaugeDemoThread");
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                gauge.moveToValue(300);
-            }
-        }, 2800);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                gauge.moveToValue(550);
-            }
-        }, 5600);
+//        gauge.moveToValue(800);
+//
+//        HandlerThread thread = new HandlerThread("GaugeDemoThread");
+//        thread.start();
+//        Handler handler = new Handler(thread.getLooper());
+//
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                gauge.moveToValue(300);
+//            }
+//        }, 2800);
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                gauge.moveToValue(550);
+//            }
+//        }, 5600);
 
         bpGotoMain = findViewById(R.id.bpGotoMain);
         txtRPM = findViewById(R.id.txtRPM);
@@ -75,9 +77,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         handler = new Handler(Looper.getMainLooper());
 
         rpmGauge = findViewById(R.id.rpmLinearGauge);
-
         rpmGauge.setProgress(1000);
 
+        gauge = findViewById((R.id.gauge));
 
 
         // try to connect to the OBDII device using the MAC address
@@ -192,6 +194,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 } else {
                     txtRPM.setText("RPM : " + String.valueOf(rpm));  // display the RPM value
                     rpmGauge.setProgress(rpm);
+                    gauge.moveToValue((float) rpm /10);
                 }
             } else {
                 txtRPM.setText("Bluetooth object is null");
