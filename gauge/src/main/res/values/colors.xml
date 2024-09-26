@@ -3,4 +3,7 @@
     <color name="debug_red">#F00</color>
     <color name="debug_green">#0F0</color>
     <color name="debug_blue">#00F</color>
+    <color name="background">#222</color>
+    <color name="needle">#900</color>
+    <color name="scale">#930</color>
 </resources>

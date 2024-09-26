@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
             imgBtIndicator.setImageResource(R.drawable.green_circle);
             gotoECockpitFragment.setVisibility(View.VISIBLE);
 
+            // used to bypass main fragment
+            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
+            startActivity(intent);
+
         } else {
             // If not on an emulator, check Bluetooth state
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

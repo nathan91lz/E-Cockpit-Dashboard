@@ -1,5 +1,6 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 
@@ -35,7 +37,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private ProgressBar rpmGauge;
 
     private Gauge gauge;
-    //final Gauge gauge = (Gauge) findViewById(R.id.gauge);
 
 
     private static final String TAG = "ECockpitDashboard";
@@ -51,24 +52,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
 
-//        gauge.moveToValue(800);
-//
-//        HandlerThread thread = new HandlerThread("GaugeDemoThread");
-//        thread.start();
-//        Handler handler = new Handler(thread.getLooper());
-//
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                gauge.moveToValue(300);
-//            }
-//        }, 2800);
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                gauge.moveToValue(550);
-//            }
-//        }, 5600);
 
         bpGotoMain = findViewById(R.id.bpGotoMain);
         txtRPM = findViewById(R.id.txtRPM);
@@ -80,6 +63,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         rpmGauge.setProgress(1000);
 
         gauge = findViewById((R.id.gauge));
+        int faceColor = ContextCompat.getColor(this, R.color.face);
+        gauge.setDrawingCacheBackgroundColor(faceColor);
 
 
         // try to connect to the OBDII device using the MAC address
@@ -194,7 +179,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 } else {
                     txtRPM.setText("RPM : " + String.valueOf(rpm));  // display the RPM value
                     rpmGauge.setProgress(rpm);
-                    gauge.moveToValue((float) rpm /10);
+                    gauge.moveToValue((float) rpm );
                 }
             } else {
                 txtRPM.setText("Bluetooth object is null");

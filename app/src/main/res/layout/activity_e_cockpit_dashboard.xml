@@ -61,17 +61,21 @@
 
     <de.nitri.gauge.Gauge
         android:id="@+id/gauge"
-        android:layout_width="264dp"
-        android:layout_height="269dp"
+        android:layout_width="374dp"
+        android:layout_height="408dp"
         gauge:labelTextSize="42"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:maxValue="1000"
+        gauge:maxValue="9000"
         gauge:minValue="0"
-        gauge:totalNicks="120"
-        gauge:valuePerNick="10" />
+        gauge:totalNicks="130"
+        gauge:valuePerNick="100"
+        gauge:faceColor="0xFF222222"
+        gauge:needleColor="0xFF990000"
+        gauge:scaleColor="0xFF993300"
+        gauge:lowerText="C1 vts"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
