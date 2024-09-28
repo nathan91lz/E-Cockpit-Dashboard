@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 
 import java.io.IOException;
@@ -154,10 +155,26 @@ public class Bluetooth {
 
 
     // read the response from the OBD-II device
+//    public String readResponse() throws IOException {
+//        byte[] buffer = new byte[32]; // HERE PROBLEM CRASH test
+//        int bytes = inputStream.read(buffer);
+//        return new String(buffer, 0, bytes);
+//    }
     public String readResponse() throws IOException {
-        byte[] buffer = new byte[32]; // HERE PROBLEM CRASH test
+        byte[] buffer = new byte[32];  // adjust buffer size if necessary
         int bytes = inputStream.read(buffer);
-        return new String(buffer, 0, bytes);
+        String response = new String(buffer, 0, bytes);
+
+        // Remove unwanted characters like carriage returns (^M) and trailing '>'
+        response = response.replace("\r", "").replace("\n", "").replace(">", "").trim();
+
+        // Find and extract the part containing '41 0C' followed by two bytes
+        int index = response.indexOf("41 0C");
+        if (index != -1 && response.length() >= index + 11) { // '41 0C' + 2 bytes is 11 characters (including spaces)
+            return response.substring(index, index + 11);  // Return only '41 0C XX XX'
+        } else {
+            return "Invalid response"; // Return a message or handle error case
+        }
     }
 
 
@@ -165,11 +182,11 @@ public class Bluetooth {
     public int processRPMResponse(String response) {
         if (response.contains("41 0C")) {
             try {
-                // Extract hex values after '41 0C'
+                // extract hex values after '41 0C'
                 String hexA = response.substring(6, 8);
                 String hexB = response.substring(9, 11);
 
-                // Convert hex to integers
+                // convert hex to integers
                 int A = Integer.parseInt(hexA, 16);
                 int B = Integer.parseInt(hexB, 16);
 
