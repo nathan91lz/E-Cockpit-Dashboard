@@ -60,7 +60,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         handler = new Handler(Looper.getMainLooper());
 
         rpmGauge = findViewById(R.id.rpmLinearGauge);
-        rpmGauge.setProgress(1000);
+        rpmGauge.setProgress(0);
+
 
         gauge = findViewById((R.id.gauge));
         int faceColor = ContextCompat.getColor(this, R.color.face);
@@ -179,7 +180,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 } else if (rpm >= 0 && rpm <= 10000) {  // Adjust condition as needed for your RPM range
                     txtRPM.setText("RPM: " + String.valueOf(rpm));  // Display the RPM value
                     rpmGauge.setProgress(rpm);  // Update gauge progress
-                    gauge.moveToValue((float) rpm);  // Move gauge needle to RPM value
+                    gauge.moveToValue((float) rpm);  // smooth
+                    //gauge.setValue((float) rpm);
+                    gauge.setLowerText(String.valueOf(rpm));
                 } else {
                     txtRPM.setText("Invalid RPM value");
                     Log.w(TAG, "Invalid RPM value: " + String.valueOf(rpm));

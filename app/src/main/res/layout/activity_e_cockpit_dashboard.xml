@@ -68,14 +68,15 @@
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:maxValue="9000"
+        gauge:maxValue="8000"
         gauge:minValue="0"
         gauge:totalNicks="130"
         gauge:valuePerNick="100"
         gauge:faceColor="0xFF222222"
         gauge:needleColor="0xFF990000"
         gauge:scaleColor="0xFF993300"
-        gauge:lowerText="C1 vts"/>
+        gauge:lowerText="RPM"
+        gauge:upperText="C1 vts"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
