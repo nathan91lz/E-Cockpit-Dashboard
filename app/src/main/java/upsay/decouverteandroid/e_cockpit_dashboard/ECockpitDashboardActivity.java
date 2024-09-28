@@ -127,7 +127,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         Log.i(TAG, "Request ongoing...");
 
                         // Schedule the next execution after 1 second
-                        handler.postDelayed(this, 1000);
+                        handler.postDelayed(this, 200);
                     } catch (Exception e) {
                         // Log the error and display a message on the UI
                         Log.e(TAG, "Error during RPM request", e);
@@ -175,11 +175,14 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 int rpm = bluetooth.processRPMResponse(response);  // process the response to get RPM
                 if (rpm == -1) {
                     txtRPM.setText("ERROR RPM value");
-                    Log.w(TAG, "RPM value :" + String.valueOf(rpm));
+                    Log.w(TAG, "RPM value: " + String.valueOf(rpm));
+                } else if (rpm >= 0 && rpm <= 10000) {  // Adjust condition as needed for your RPM range
+                    txtRPM.setText("RPM: " + String.valueOf(rpm));  // Display the RPM value
+                    rpmGauge.setProgress(rpm);  // Update gauge progress
+                    gauge.moveToValue((float) rpm);  // Move gauge needle to RPM value
                 } else {
-                    txtRPM.setText("RPM : " + String.valueOf(rpm));  // display the RPM value
-                    rpmGauge.setProgress(rpm);
-                    gauge.moveToValue((float) rpm );
+                    txtRPM.setText("Invalid RPM value");
+                    Log.w(TAG, "Invalid RPM value: " + String.valueOf(rpm));
                 }
             } else {
                 txtRPM.setText("Bluetooth object is null");
