@@ -34,6 +34,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
+    private String response;
+    private String rpmValue;
+
     private ProgressBar rpmGauge;
 
     private Gauge gauge;
@@ -157,7 +160,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         try {
             if (bluetooth != null) {
                 bluetooth.requestRPM();  // send the RPM request command
-                String response = bluetooth.readResponse();  // read the response from the OBD device
+                response = bluetooth.readResponse();  // read the response from the OBD device
 
                 try {
                     Thread.sleep(200); // adjust the delay as necessary : 200 ok
@@ -173,20 +176,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     return;
                 }
 
-                int rpm = bluetooth.processRPMResponse(response);  // process the response to get RPM
-                if (rpm == -1) {
-                    txtRPM.setText("ERROR RPM value");
-                    Log.w(TAG, "RPM value: " + String.valueOf(rpm));
-                } else if (rpm >= 0 && rpm <= 10000) {  // Adjust condition as needed for your RPM range
-                    txtRPM.setText("RPM: " + String.valueOf(rpm));  // Display the RPM value
-                    rpmGauge.setProgress(rpm);  // Update gauge progress
-                    gauge.moveToValue((float) rpm);  // smooth
-                    //gauge.setValue((float) rpm);
-                    gauge.setLowerText(String.valueOf(rpm));
-                } else {
-                    txtRPM.setText("Invalid RPM value");
-                    Log.w(TAG, "Invalid RPM value: " + String.valueOf(rpm));
-                }
+                rpmValue = processRPMResponse(response);  // process the response to get RPM
+                txtRPM.setText("RPM: " + rpmValue);  // display the RPM value
+
+
             } else {
                 txtRPM.setText("Bluetooth object is null");
             }
@@ -197,6 +190,41 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
+    // process the response to extract RPM
+    public String processRPMResponse(String response) {
+        int rpm;
+        if (response.contains("41 0C")) {
+            try {
+                // extract hex values after '41 0C'
+                String hexA = response.substring(6, 8);
+                String hexB = response.substring(9, 11);
+
+                // convert hex to integers
+                int A = Integer.parseInt(hexA, 16);
+                int B = Integer.parseInt(hexB, 16);
+
+                // calculate RPM
+                rpm = ((A * 256) + B) / 4;
+                Log.w(TAG, "RPM value: " + String.valueOf(rpm));
+
+                if (rpm >= 0 && rpm <= 10000) {
+                    rpmGauge.setProgress(rpm);  // update gauge progress
+                    gauge.moveToValue(rpm);  // smooth
+                    //gauge.setValue(Float.parseFloat(rpm));
+                    gauge.setLowerText(String.valueOf(rpm));
+
+                    return String.valueOf(rpm);
+                } else {
+                    return "Invalid RPM value : Out of range";
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Error -1"; // -1 on error
+            }
+        }
+        return "Error response value : '41 0C' not found";
+    }
 
 
 

@@ -24,6 +24,7 @@ public class Bluetooth {
     public static String macAddress = getConnectedDeviceMac();
     public static String deviceName = getConnectedDeviceName();
 
+
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -181,27 +182,7 @@ public class Bluetooth {
     }
 
 
-    // process the response to extract RPM
-    public int processRPMResponse(String response) {
-        if (response.contains("41 0C")) {
-            try {
-                // extract hex values after '41 0C'
-                String hexA = response.substring(6, 8);
-                String hexB = response.substring(9, 11);
 
-                // convert hex to integers
-                int A = Integer.parseInt(hexA, 16);
-                int B = Integer.parseInt(hexB, 16);
-
-                // Calculate RPM
-                return ((A * 256) + B) / 4;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return -1; // Return -1 on error
-            }
-        }
-        return -2; // Return -1 if '41 0C' not found
-    }
 
 
     // close the Bluetooth connection
