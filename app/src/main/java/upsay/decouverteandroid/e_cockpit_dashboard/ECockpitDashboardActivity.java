@@ -127,8 +127,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         requestRPMData();
                         Log.i(TAG, "Request ongoing...");
 
-                        // Schedule the next execution after 1 second
-                        handler.postDelayed(this, 200);
+                        // schedule the next execution
+                        handler.postDelayed(this, 50);
                     } catch (Exception e) {
                         // Log the error and display a message on the UI
                         Log.e(TAG, "Error during RPM request", e);
@@ -160,7 +160,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 String response = bluetooth.readResponse();  // read the response from the OBD device
 
                 try {
-                    Thread.sleep(200); // adjust the delay as necessary (200ms here)
+                    Thread.sleep(200); // adjust the delay as necessary : 200 ok
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

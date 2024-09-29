@@ -27,6 +27,8 @@ public class Bluetooth {
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private static final String TAG = "ECockpitDashboard";
+
 
 
 
@@ -164,6 +166,7 @@ public class Bluetooth {
         byte[] buffer = new byte[32];  // adjust buffer size if necessary
         int bytes = inputStream.read(buffer);
         String response = new String(buffer, 0, bytes);
+        Log.i(TAG, "Response :" + response);
 
         // Remove unwanted characters like carriage returns (^M) and trailing '>'
         response = response.replace("\r", "").replace("\n", "").replace(">", "").trim();
