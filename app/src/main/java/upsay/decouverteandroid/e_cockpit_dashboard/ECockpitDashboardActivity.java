@@ -61,9 +61,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         bluetooth = new Bluetooth();
         handler = new Handler(Looper.getMainLooper());
-
-        rpmGauge = findViewById(R.id.rpmLinearGauge);
-        rpmGauge.setProgress(0);
+        
 
 
         gauge = findViewById((R.id.gauge));

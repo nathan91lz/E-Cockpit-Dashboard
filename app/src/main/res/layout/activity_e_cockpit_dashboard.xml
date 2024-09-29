@@ -9,31 +9,21 @@
     tools:context=".ECockpitDashboardActivity">
 
 
-    <!-- button Cancel -->
+
 
     <!-- text RPM -->
-
-    <!-- RPM Gauge -->
-
     <TextView
         android:id="@+id/txtRPM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="24dp"
         android:text="RPM : "
-        gauge:layout_constraintBottom_toTopOf="@+id/rpmLinearGauge"
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.294"
+        gauge:layout_constraintHorizontal_bias="0.242"
         gauge:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/txtRPMDebug"
-        android:layout_width="54dp"
-        android:layout_height="50dp"
-        android:text="RPM debug : "
-        android:visibility="gone" />
-
-
+    <!-- button Cancel -->
     <Button
         android:id="@+id/bpGotoMain"
         android:layout_width="wrap_content"
@@ -46,37 +36,28 @@
         gauge:layout_constraintTop_toTopOf="parent"
         gauge:layout_constraintVertical_bias="0.951" />
 
-    <ProgressBar
-        android:id="@+id/rpmLinearGauge"
-        android:layout_width="match_parent"
-        android:layout_height="31dp"
-        android:max="9000"
-        android:progress="1500"
-        android:progressDrawable="@drawable/rpm_progress"
-        android:visibility="gone"
-        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toTopOf="parent" />
-
+    <!-- RPM Gauge -->
     <de.nitri.gauge.Gauge
         android:id="@+id/gauge"
         android:layout_width="374dp"
         android:layout_height="408dp"
+        gauge:faceColor="0xFF222222"
         gauge:labelTextSize="42"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
+        gauge:lowerText="RPM"
         gauge:maxValue="8000"
         gauge:minValue="0"
-        gauge:totalNicks="130"
-        gauge:valuePerNick="100"
-        gauge:faceColor="0xFF222222"
         gauge:needleColor="0xFF990000"
         gauge:scaleColor="0xFF993300"
-        gauge:lowerText="RPM"
-        gauge:upperText="C1 vts"/>
+        gauge:totalNicks="130"
+        gauge:upperText="C1 vts"
+        gauge:valuePerNick="100" />
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
