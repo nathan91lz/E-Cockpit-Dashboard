@@ -34,6 +34,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private TextView txtEngineOilTemp;
     private TextView txtCoolantTemp;
     private TextView txtIntakeAirTemp;
+    private TextView txtTemperature;
+    private TextView txtCoolantTemperature;
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
@@ -73,6 +75,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         txtEngineOilTemp = findViewById(R.id.txtEngineOilTemp);
         txtCoolantTemp = findViewById(R.id.txtCoolantTemp);
         txtIntakeAirTemp = findViewById(R.id.txtIntakeAirTemp);
+        txtTemperature = findViewById(R.id.txtTemperature);
+        txtCoolantTemperature = findViewById(R.id.txtCoolantTemperature);
 
         bluetooth = new Bluetooth();
         handler = new Handler(Looper.getMainLooper());
@@ -181,7 +185,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             public void run() {
                 if (isRequesting) {
                     try {
-                        /*
+
                         if (rpmRequestCount < 4) {
                             // request and process RPM data
                             requestRPMData();
@@ -190,37 +194,25 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                             // call alternate data requests after 4 RPM requests
                             switch (rpmRequestCount) {
                                 case 4:
-                                    requestFuelLevelData();
-                                    Log.i(TAG, "Request ongoing... (Fuel Level)");
+                                    requestCoolantTempData();
+                                    Log.i(TAG, "Request ongoing... (Coolant Temperature)");
                                     break;
                                 case 5:
-                                    requestAmbientAirTempData();
-                                    Log.i(TAG, "Request ongoing... (Ambient Air Temp)");
-                                    break;
-                                case 6:
-                                    requestEngineOilTempData();
-                                    Log.i(TAG, "Request ongoing... (Engine Oil Temp)");
-                                    break;
-                                case 7:
-                                    requestCoolantTempData();
-                                    Log.i(TAG, "Request ongoing... (Coolant Temp)");
-                                    break;
-                                case 8:
                                     requestIntakeAirTempData();
-                                    Log.i(TAG, "Request ongoing... (Coolant Temp)");
+                                    Log.i(TAG, "Request ongoing... (Intake Air Temperature)");
                                     break;
                             }
                         }
 
                         // increment or reset the RPM counter
-                        rpmRequestCount = (rpmRequestCount + 1) % 9; // 4 RPM requests + 4 other data requests
-                        */
+                        rpmRequestCount = (rpmRequestCount + 1) % 6; // 4 RPM requests + 4 other data requests
+
 
                         // Request and process RPM data
-                        requestRPMData();
-                        //requestCoolantTempData();
-                        //requestIntakeAirTempData();
-                        Log.i(TAG, "Request ongoing...");
+                        //requestRPMData(); //OK
+                        //requestCoolantTempData(); //OK
+                        //requestIntakeAirTempData(); //OK
+                        //Log.i(TAG, "Request ongoing...");
 
                         // schedule the next execution
                         handler.postDelayed(this, 50);
@@ -553,16 +545,19 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
 
     public String processCoolantTempResponse(String response) {
-        int temperature;
+        // Normalize the response by trimming and removing unnecessary characters
+        response = response.trim().replaceAll(">", "").replaceAll("<", "");
+
+        // Check if the response contains the expected prefix for coolant temperature
         if (response.contains("41 05")) {
             try {
-                // split the response by spaces to handle variable length formatting
-                String[] parts = response.split(" ");
+                // Split the response by spaces
+                String[] parts = response.split("\\s+");
                 int index = -1;
 
                 // Search for the "41 05" prefix in the response
                 for (int i = 0; i < parts.length; i++) {
-                    if (parts[i].equals("41") && i + 1 < parts.length && parts[i + 1].equals("05")) {
+                    if (i + 1 < parts.length && "41".equals(parts[i]) && "05".equals(parts[i + 1])) {
                         index = i + 2; // The hex value should be after "41 05"
                         break;
                     }
@@ -570,68 +565,89 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                 // Ensure index is valid and within the bounds of the response
                 if (index != -1 && index < parts.length) {
-                    String hexA = parts[index];
+                    String hexValue = parts[index];
 
                     // Convert hex to an integer
-                    int A = Integer.parseInt(hexA, 16);
+                    int temperatureHex = Integer.parseInt(hexValue, 16);
 
                     // Calculate temperature
-                    temperature = A - 40;
-
+                    int temperature = temperatureHex - 40;
                     Log.w(TAG, "Coolant Temperature: " + temperature + "°C");
 
+                    // Display the temperature correctly
                     if (temperature >= -40 && temperature <= 215) {
-                        return temperature + " °C";
+                        txtCoolantTemperature.setText(temperature + " °C");
+                        return "Coolant Temperature: " + temperature + " °C";
                     } else {
-                        return "Invalid Intake Air Temp value: Out of range";
+                        return "Invalid Coolant Temp value: Out of range";
                     }
+                } else {
+                    return "Error response: '41 05' found, but no temperature data";
                 }
-
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Invalid hex value in response: " + response, e);
+                return "Error - Invalid hex value";
             } catch (Exception e) {
-                e.printStackTrace();
-                return "Error -1"; // -1 on error
+                Log.e(TAG, "An unexpected error occurred: " + e.getMessage(), e);
+                return "Error -1"; // -1 on general error
             }
         }
-        return "Error response value : '41 05' not found";
+        return "Error response: '41 05' not found";
     }
 
 
-
-
-    // process the response to extract Intake Air Temperature
     public String processIntakeAirTempResponse(String response) {
-        if (response.contains("41 0F")) {  // PID 0F is for Intake Air Temperature
+        // Normalize the response by trimming and removing unnecessary characters
+        response = response.trim().replaceAll(">", "").replaceAll("<", "");
+
+        // Check if the response contains the expected prefix for intake air temperature
+        if (response.contains("41 0F")) {
             try {
-                // extract hex value after '41 0F'
-                String hexA = response.substring(response.indexOf("41 0F") + 5, response.indexOf("41 0F") + 7).trim();
+                // Split the response by spaces
+                String[] parts = response.split("\\s+");
+                int index = -1;
 
-                // convert hex to integer
-                int A = Integer.parseInt(hexA, 16);
-
-                // calculate temperature
-                int temperature = A - 40;
-                Log.w(TAG, "Intake Air Temperature: " + temperature + " °C");
-
-                // check if temperature is within a reasonable range
-                if (temperature >= -40 && temperature <= 215) {
-                    return temperature + " °C";
-                } else {
-                    return "Invalid Intake Air Temp value: Out of range";
+                // Search for the "41 0F" prefix in the response
+                for (int i = 0; i < parts.length; i++) {
+                    if (i + 1 < parts.length && "41".equals(parts[i]) && "0F".equals(parts[i + 1])) {
+                        index = i + 2; // The hex value should be after "41 0F"
+                        break;
+                    }
                 }
 
-            } catch (IndexOutOfBoundsException e) {
-                Log.e(TAG, "Response parsing error: " + e.getMessage());
-                return "Error - Invalid response format"; // more specific error message
+                // Ensure index is valid and within the bounds of the response
+                if (index != -1 && index < parts.length) {
+                    String hexValue = parts[index];
+
+                    // Convert hex to an integer
+                    int temperatureHex = Integer.parseInt(hexValue, 16);
+
+                    // Calculate temperature
+                    int temperature = temperatureHex - 40;
+                    Log.w(TAG, "Intake Air Temperature: " + temperature + "°C");
+
+                    // Display the temperature correctly
+                    if (temperature >= -40 && temperature <= 215) {
+                        txtTemperature.setText(temperature + " °C");
+                        return "Intake Air Temperature: " + temperature + " °C";
+                    } else {
+                        return "Invalid Intake Air Temp value: Out of range";
+                    }
+                } else {
+                    return "Error response: '41 0F' found, but no temperature data";
+                }
             } catch (NumberFormatException e) {
-                Log.e(TAG, "Error parsing hex value: " + e.getMessage());
-                return "Error - Unable to convert hex to number"; // more specific error message
+                Log.e(TAG, "Invalid hex value in response: " + response, e);
+                return "Error - Invalid hex value";
             } catch (Exception e) {
-                Log.e(TAG, "Unexpected error: " + e.getMessage());
-                return "Error -1"; // general error
+                Log.e(TAG, "An unexpected error occurred: " + e.getMessage(), e);
+                return "Error -1"; // -1 on general error
             }
         }
         return "Error response: '41 0F' not found";
     }
+
+
 
 
 

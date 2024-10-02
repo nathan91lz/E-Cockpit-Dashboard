@@ -17,15 +17,16 @@
         android:id="@+id/txtRPM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
         android:layout_marginBottom="32dp"
         android:text="RPM : "
         gauge:layout_constraintBottom_toTopOf="@+id/gauge"
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintHorizontal_bias="0.21"
         gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toBottomOf="@+id/txtCoolantTemp"
-        gauge:layout_constraintVertical_bias="1.0" />
+        gauge:layout_constraintTop_toBottomOf="@+id/txtIntakeAirTemp"
+        gauge:layout_constraintVertical_bias="0.215" />
+
+    <!-- RPM Gauge -->
 
     <Button
         android:id="@+id/bpGotoMain"
@@ -34,12 +35,10 @@
         android:text="Cancel"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.1"
+        gauge:layout_constraintHorizontal_bias="0.105"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.951" />
-
-    <!-- RPM Gauge -->
+        gauge:layout_constraintVertical_bias="0.98" />
 
     <de.nitri.gauge.Gauge
         android:id="@+id/gauge"
@@ -115,6 +114,61 @@
         gauge:layout_constraintHorizontal_bias="0.25"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toBottomOf="@+id/txtCoolantTemp" />
+
+    <TextView
+        android:id="@+id/txtTemperatureText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:text="Intake Air Temperature :"
+        android:textStyle="bold"
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.177"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/txtTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:text="°C"
+        android:textStyle="bold"
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.056"
+        gauge:layout_constraintStart_toEndOf="@+id/txtTemperatureText"
+        gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/txtCoolantTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="24dp"
+        android:text=" °C"
+        android:textStyle="bold"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.267"
+        gauge:layout_constraintStart_toEndOf="@+id/progressBar"
+        gauge:layout_constraintTop_toBottomOf="@+id/gauge"
+        gauge:layout_constraintVertical_bias="0.009" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="220dp"
+        android:layout_height="35dp"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.357"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/gauge"
+        gauge:layout_constraintVertical_bias="0.079" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
