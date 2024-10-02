@@ -9,21 +9,24 @@
     tools:context=".ECockpitDashboardActivity">
 
 
-
-
     <!-- text RPM -->
+
+    <!-- button Cancel -->
+
     <TextView
         android:id="@+id/txtRPM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginBottom="32dp"
         android:text="RPM : "
         gauge:layout_constraintBottom_toTopOf="@+id/gauge"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.242"
-        gauge:layout_constraintStart_toStartOf="parent" />
+        gauge:layout_constraintHorizontal_bias="0.21"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtCoolantTemp"
+        gauge:layout_constraintVertical_bias="1.0" />
 
-    <!-- button Cancel -->
     <Button
         android:id="@+id/bpGotoMain"
         android:layout_width="wrap_content"
@@ -37,6 +40,7 @@
         gauge:layout_constraintVertical_bias="0.951" />
 
     <!-- RPM Gauge -->
+
     <de.nitri.gauge.Gauge
         android:id="@+id/gauge"
         android:layout_width="374dp"
@@ -47,6 +51,7 @@
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="0.691"
         gauge:lowerText="RPM"
         gauge:maxValue="8000"
         gauge:minValue="0"
@@ -56,8 +61,60 @@
         gauge:upperText="C1 vts"
         gauge:valuePerNick="100" />
 
+    <TextView
+        android:id="@+id/txtFuelLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Fuel Level : "
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.227"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/txtAmbientAirTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Ambiant Air Temp : "
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.259"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtFuelLevel" />
 
+    <TextView
+        android:id="@+id/txtEngineOilTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Engine Oil Temp : "
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.252"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtAmbientAirTemp" />
+
+    <TextView
+        android:id="@+id/txtCoolantTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="Coolant Temp : "
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.242"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtAmbientAirTemp" />
+
+    <TextView
+        android:id="@+id/txtIntakeAirTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Intake Air Temp : "
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.25"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtCoolantTemp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

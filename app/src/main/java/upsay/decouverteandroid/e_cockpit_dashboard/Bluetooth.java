@@ -138,10 +138,15 @@ public class Bluetooth {
 
     
     // send AT command to initialize the OBD-II connection
-    public void initializeConnection() throws IOException {
+    public void initializeConnection() throws IOException, InterruptedException {
         sendATCommand("ATZ\r");
+        Thread.sleep(200);
+
         sendATCommand("ATE0\r");
+        Thread.sleep(200);
+
         sendATCommand("ATL0\r");
+        Thread.sleep(200);
     }
 
 
@@ -151,33 +156,58 @@ public class Bluetooth {
     }
 
 
+    // send AT command to request Fuel level
+    public void requestFuelLevel() throws IOException {
+        sendATCommand("012F\r");
+    }
+
+
+    // send AT command to request Fuel level
+    public void requestAmbientAirTemp() throws IOException {
+        sendATCommand("0146\r");
+    }
+
+
+    // send AT command to request Fuel level
+    public void requestEngineOilTemp() throws IOException {
+        sendATCommand("015C\r"); // check
+    }
+
+
+    // send AT command to request Fuel level
+    public void requestCoolantTemp() throws IOException {
+        sendATCommand("0105\r");
+    }
+
+
+    // send AT command to request Fuel level
+    public void requestIntakeAirTemp() throws IOException {
+        sendATCommand("010F\r");
+    }
+
+
     // send an AT command to the device
     public void sendATCommand(String command) throws IOException {
         outputStream.write(command.getBytes());
     }
 
 
-    // read the response from the OBD-II device
-//    public String readResponse() throws IOException {
-//        byte[] buffer = new byte[32]; // HERE PROBLEM CRASH test
-//        int bytes = inputStream.read(buffer);
-//        return new String(buffer, 0, bytes);
-//    }
-    public String readResponse() throws IOException {
-        byte[] buffer = new byte[32];  // adjust buffer size if necessary
+    public String readResponse(String expectedResponseCode) throws IOException {
+        byte[] buffer = new byte[32];  // Adjust buffer size if necessary
         int bytes = inputStream.read(buffer);
         String response = new String(buffer, 0, bytes);
-        Log.i(TAG, "Response :" + response);
+        Log.i(TAG, "Response: " + response);
 
-        // Remove unwanted characters like carriage returns (^M) and trailing '>'
+        // clean up the response by removing unwanted characters like carriage returns and '>'
         response = response.replace("\r", "").replace("\n", "").replace(">", "").trim();
 
-        // Find and extract the part containing '41 0C' followed by two bytes
-        int index = response.indexOf("41 0C");
-        if (index != -1 && response.length() >= index + 11) { // '41 0C' + 2 bytes is 11 characters (including spaces)
-            return response.substring(index, index + 11);  // Return only '41 0C XX XX'
+        // Find and extract the part containing the expected response code followed by two bytes
+        int index = response.indexOf(expectedResponseCode);
+        if (index != -1 && response.length() >= index + expectedResponseCode.length() + 6) {
+            // Expected response code + 2 bytes = expectedResponseCode length + 6 characters (including spaces)
+            return response.substring(index, index + expectedResponseCode.length() + 6);  // Return the full response
         } else {
-            return "Invalid response"; // Return a message or handle error case
+            return "Invalid response";  // Return a message or handle the error case
         }
     }
 
