@@ -4,25 +4,26 @@
 
 BluetoothSerial SerialBT;
 
-int rpm = 0;                  
-int rpmIncrement = 500;        
+int rpm = 0; 
+int maxRPM = 8000;                 
+int rpmIncrement = 500;     
+
 unsigned long previousMillis = 0;  
-const long interval = 500;     // RPM update
+const long interval = 500;     // update
 
 const int ledPin = 2;          
 bool isConnected = false;     
 bool dataReceived = false;    
 unsigned long blinkStartMillis = 0;  
 
-// Coolant temperature simulation
-int coolantTemp = 0;            // Coolant temperature (0 to 110)
-const int maxCoolantTemp = 110; // Max coolant temperature
-const int coolantIncrement = 1;  // Increment for coolant temp
-
-// Air temperature simulation
-int airTemp = 0;                // Air temperature (0 to 40)
-const int maxAirTemp = 40;      // Max air temperature
-const int airIncrement = 1;      // Increment for air temp
+// coolant temperature simulation
+int coolantTemp = 0;            
+const int maxCoolantTemp = 110; 
+const int coolantIncrement = 1;  
+// air temperature simulation
+int airTemp = 0;                
+const int maxAirTemp = 40;      
+const int airIncrement = 1;    
 
 String padHex(int value) {
   String hexString = String(value, HEX);
@@ -42,23 +43,21 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();  // Get current time
 
-  // RPM simulation update every 500ms
+  // simulation update every 500ms
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;  
-    rpm += rpmIncrement;             
+    rpm += rpmIncrement;
+    coolantTemp += coolantIncrement; 
+    airTemp += airIncrement;     
     
-    if (rpm > 9000) {                
+    if (rpm > maxRPM) {                
       rpm = 0;
     }
-
-    // Increment coolant temperature if below max
-    if (coolantTemp < maxCoolantTemp) {
-      coolantTemp += coolantIncrement;
+    if (coolantTemp > maxCoolantTemp) {
+      coolantTemp = 0;
     }
-
-    // Increment air temperature if below max
-    if (airTemp < maxAirTemp) {
-      airTemp += airIncrement;
+    if (airTemp > maxAirTemp) {
+      airTemp = 0;
     }
   }
   
