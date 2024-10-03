@@ -136,17 +136,45 @@ public class Bluetooth {
         inputStream = socket.getInputStream();
     }
 
+
+    // waiting for the response to the command until the prompt '>' is received and get it
+    public String waitForPrompt() throws IOException {
+        byte[] buffer = new byte[64];
+        StringBuilder responseBuilder = new StringBuilder();
+
+        while (true) {
+            int bytes = inputStream.read(buffer);  // read from the input stream
+            if (bytes != -1) {
+                String part = new String(buffer, 0, bytes).trim();
+                responseBuilder.append(part);
+
+                // exit the loop when the prompt '>' is found, meaning OBD-II is ready
+                if (responseBuilder.toString().endsWith(">")) {
+                    break;
+                }
+            }
+        }
+        Log.i(TAG, "Brut response received: '" + responseBuilder.toString() + "'");
+        String cleanedResponse = responseBuilder.toString()
+                .replace(">", "")       // Remove the prompt '>'
+                .replace("\r", "")      // Remove carriage return
+                .replace("\n", "")      // Remove line feed
+                .trim();                // Trim any leading/trailing spaces
+        Log.i(TAG, "Cleaned response received: '" + cleanedResponse + "'");
+        return cleanedResponse;
+    }
+
     
     // send AT command to initialize the OBD-II connection
     public void initializeConnection() throws IOException, InterruptedException {
         sendATCommand("ATZ\r");
-        Thread.sleep(200);
+        waitForPrompt(); // Wait until '>' or appropriate response
 
         sendATCommand("ATE0\r");
-        Thread.sleep(200);
+        waitForPrompt();
 
         sendATCommand("ATL0\r");
-        Thread.sleep(200);
+        waitForPrompt();
     }
 
 
@@ -174,13 +202,13 @@ public class Bluetooth {
     }
 
 
-    // send AT command to request Fuel level
+    // send AT command to request Coolant temperature
     public void requestCoolantTemp() throws IOException {
         sendATCommand("0105\r");
     }
 
 
-    // send AT command to request Fuel level
+    // send AT command to request Intake air temperature
     public void requestIntakeAirTemp() throws IOException {
         sendATCommand("010F\r");
     }
@@ -195,23 +223,30 @@ public class Bluetooth {
     public String readResponse(String expectedResponseCode) throws IOException {
         byte[] buffer = new byte[32];  // Adjust buffer size if necessary
         int bytes = inputStream.read(buffer);
+
+        if (bytes == -1) {
+            Log.e(TAG, "Error input null");
+            return "Error: No data read from stream";  // Handle stream closure or no data
+        }
+
+
+
+        // Convert the read bytes to a string
         String response = new String(buffer, 0, bytes);
-        Log.i(TAG, "Response: " + response);
+
 
         // clean up the response by removing unwanted characters like carriage returns and '>'
-        response = response.replace("\r", "").replace("\n", "").replace(">", "").trim();
+        //response = response.replace("\r", "").replace("\n", "").replace(">", "").trim();
 
-        // Find and extract the part containing the expected response code followed by two bytes
-        int index = response.indexOf(expectedResponseCode);
-        if (index != -1 && response.length() >= index + expectedResponseCode.length() + 6) {
-            // Expected response code + 2 bytes = expectedResponseCode length + 6 characters (including spaces)
-            return response.substring(index, index + expectedResponseCode.length() + 6);  // Return the full response
+        // Check if the response contains the expected response code
+        if (response.contains(expectedResponseCode)) {
+            Log.i(TAG, "Response returned: " + response);
+            return response; // Return the entire response if it matches
         } else {
-            return "Invalid response";  // Return a message or handle the error case
+            Log.w(TAG, "Response invalid: " + response);
+            return "Invalid response"; // Return invalid response if it does not match
         }
     }
-
-
 
 
 
