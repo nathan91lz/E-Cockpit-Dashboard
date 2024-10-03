@@ -14,6 +14,16 @@ bool isConnected = false;
 bool dataReceived = false;    
 unsigned long blinkStartMillis = 0;  
 
+// Coolant temperature simulation
+int coolantTemp = 0;            // Coolant temperature (0 to 110)
+const int maxCoolantTemp = 110; // Max coolant temperature
+const int coolantIncrement = 1;  // Increment for coolant temp
+
+// Air temperature simulation
+int airTemp = 0;                // Air temperature (0 to 40)
+const int maxAirTemp = 40;      // Max air temperature
+const int airIncrement = 1;      // Increment for air temp
+
 String padHex(int value) {
   String hexString = String(value, HEX);
   if (hexString.length() < 2) {
@@ -40,6 +50,16 @@ void loop() {
     if (rpm > 9000) {                
       rpm = 0;
     }
+
+    // Increment coolant temperature if below max
+    if (coolantTemp < maxCoolantTemp) {
+      coolantTemp += coolantIncrement;
+    }
+
+    // Increment air temperature if below max
+    if (airTemp < maxAirTemp) {
+      airTemp += airIncrement;
+    }
   }
   
   // check if a Bluetooth client is connected
@@ -64,22 +84,32 @@ void loop() {
         int A = scaledRPM / 256;  // first byte of the RPM response
         int B = scaledRPM % 256;  // second byte of the RPM response
         
-        String response = "41 0C " + padHex(A) + " " + padHex(B);  
+        String response = "41 0C " + padHex(A) + " " + padHex(B) + " >";  
         
         SerialBT.println(response);  // Send simulated RPM response
         Serial.println("Sent RPM: " + String(rpm)); 
       } 
+      else if (command == "0105") {  // Coolant temperature request
+        String response = "41 05 " + padHex(coolantTemp) + " >";
+        SerialBT.println(response);  // Send simulated coolant temp response
+        Serial.println("Sent Coolant Temperature: " + String(coolantTemp)); 
+      }
+      else if (command == "010F") {  // Air temperature request
+        String response = "41 0F " + padHex(airTemp) + " >";
+        SerialBT.println(response);  // Send simulated air temp response
+        Serial.println("Sent Air Temperature: " + String(airTemp)); 
+      }
       else if (command == "ATZ") {  // ATZ command
-        SerialBT.println("OK");    
+        SerialBT.println("OK >");    
       } 
       else if (command == "ATE0") {  // ATE0 command (Echo off)
-        SerialBT.println("OK");    
+        SerialBT.println("OK >");    
       } 
       else if (command == "ATL0") {  // ATL0 command (Linefeeds off)
-        SerialBT.println("OK");    
+        SerialBT.println("OK >");    
       } 
       else {  // for any other unrecognized command
-        SerialBT.println("ERROR"); 
+        SerialBT.println("ERROR >"); 
       }
     }
   } else {
@@ -90,7 +120,7 @@ void loop() {
     }
 
     // blink the LED when disconnected
-    blinkLed(currentMillis);
+   blinkLed(currentMillis);
   }
 
   delay(100);  
