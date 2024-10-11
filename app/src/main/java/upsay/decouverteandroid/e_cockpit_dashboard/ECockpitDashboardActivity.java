@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private Gauge gauge;
 
+    private ProgressBar gaugeProgressBar;
+
     private String rmpExpectedResponse = "41 0C";
     private String fuelLevelExpectedResponse = "41 2F";
     private String ambientAirTempExpectedResponse = "41 46";
@@ -77,15 +80,17 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         txtIntakeAirTemp = findViewById(R.id.txtIntakeAirTemp);
         txtTemperature = findViewById(R.id.txtTemperature);
         txtCoolantTemperature = findViewById(R.id.txtCoolantTemperature);
+        gaugeProgressBar = findViewById(R.id.progressBar);
 
         bluetooth = new Bluetooth();
         handler = new Handler(Looper.getMainLooper());
 
-
-
         gauge = findViewById((R.id.gauge));
         int faceColor = ContextCompat.getColor(this, R.color.face);
         gauge.setDrawingCacheBackgroundColor(faceColor);
+
+        // >>>> TEST temp gauge
+        testLinearGauge();
 
 
         // try to connect to the OBDII device using the MAC address
@@ -112,7 +117,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                 Log.i(TAG, "AT command loop start");
 
-                startRequestLoop();
+                //startRequestLoop();
 
 
                 //bluetooth.readResponse();
@@ -547,6 +552,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                 if (coolantTemp >= -40 && coolantTemp <= 215) {
                     txtCoolantTemperature.setText(coolantTemp + " °C");
+                    gaugeProgressBar.setProgress(coolantTemp);
                     return "Coolant Temperature: " + coolantTemp + " °C";
                 } else {
                     return "Invalid Coolant Temp value: Out of range";
@@ -615,6 +621,55 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         }
         return "Error response: '41 0F' not found";
     }
+
+
+    private void testLinearGauge() {
+        // Create a new thread for simulating temperature changes
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int temp = 50; temp <= 120; temp += 10) {
+                    // Capture the temp value for use inside the inner Runnable
+                    final int finalTemp = temp;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Update your progress bar with the current temperature value
+                            Log.w(TAG, "Setting progress to " + finalTemp);
+                            txtCoolantTemperature.setText(finalTemp + " °C");  // Update text
+
+                            gaugeProgressBar.setProgress(finalTemp);
+
+//                            if (finalTemp < 80) {
+//                                gaugeProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_blue, null));
+//                                gaugeProgressBar.setProgress(40); // Example: Set to a base value
+//                            } else if (finalTemp >= 80 && finalTemp < 100) {
+//                                // Set the progress bar to yellow for temperatures from 60 to 100
+//                                gaugeProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_yellow, null));
+//                                gaugeProgressBar.setProgress(finalTemp);
+//                            } else {
+//                                // Set the progress bar to red for temperatures 100 and above
+//                                gaugeProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red, null));
+//                                gaugeProgressBar.setProgress(finalTemp);
+//                            }
+
+
+                        }
+                    });
+
+                    // Sleep for 500 milliseconds to simulate a delay
+                    try {
+                        Thread.sleep(500); // 500 ms delay
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+
+
 
 
 

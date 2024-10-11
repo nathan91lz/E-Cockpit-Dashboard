@@ -1,29 +1,25 @@
-// to upload > press 1 or 2s BOOT button during : Connecting ...
-
-#include "BluetoothSerial.h"  
+#include "BluetoothSerial.h"
 
 BluetoothSerial SerialBT;
 
-int rpm = 0; 
-int maxRPM = 8000;                 
-int rpmIncrement = 500;     
+int rpm = 0;
+int maxRPM = 8000;
+int rpmIncrement = 500;
 
-unsigned long previousMillis = 0;  
-const long interval = 500;     // update
+unsigned long previousMillis = 0;
+const long interval = 500;  // update
 
-const int ledPin = 2;          
-bool isConnected = false;     
-bool dataReceived = false;    
-unsigned long blinkStartMillis = 0;  
+const int ledPin = 2;
+bool isConnected = false;
 
 // coolant temperature simulation
-int coolantTemp = 0;            
-const int maxCoolantTemp = 110; 
-const int coolantIncrement = 1;  
+int coolantTemp = 0;
+const int maxCoolantTemp = 110;
+const int coolantIncrement = 1;
 // air temperature simulation
-int airTemp = 0;                
-const int maxAirTemp = 40;      
-const int airIncrement = 1;    
+int airTemp = 0;
+const int maxAirTemp = 40;
+const int airIncrement = 1;
 
 String padHex(int value) {
   String hexString = String(value, HEX);
@@ -34,23 +30,25 @@ String padHex(int value) {
 }
 
 void setup() {
-  Serial.begin(115200);        
-  SerialBT.begin("OBD2_Fake"); 
+  Serial.begin(115200);
+  SerialBT.begin("OBD2_Fake");
   Serial.println("ESP32 OBD-II Emulator started");
-  pinMode(ledPin, OUTPUT);    
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
+  static unsigned long lastCommandCheck = 0;
   unsigned long currentMillis = millis();  // Get current time
 
-  // simulation update every 500ms
+  // Update simulation every 500ms
   if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;  
+    previousMillis = currentMillis;
     rpm += rpmIncrement;
-    coolantTemp += coolantIncrement; 
-    airTemp += airIncrement;     
-    
-    if (rpm > maxRPM) {                
+    coolantTemp += coolantIncrement;
+    airTemp += airIncrement;
+
+    // Reset values if they exceed their max
+    if (rpm > maxRPM) {
       rpm = 0;
     }
     if (coolantTemp > maxCoolantTemp) {
@@ -60,85 +58,80 @@ void loop() {
       airTemp = 0;
     }
   }
-  
-  // check if a Bluetooth client is connected
+
+  // Check if a Bluetooth client is connected
   if (SerialBT.hasClient()) {
     if (!isConnected) {
       isConnected = true;  // Update connection status
       digitalWrite(ledPin, LOW);  // Turn off LED when connected
+      Serial.println("Bluetooth connected.");
     }
 
-    // check for incoming data from the Android app
-    if (SerialBT.available()) {
-      String command = SerialBT.readStringUntil('\n');  // Read command from Bluetooth
-      command.trim();  // Remove any leading/trailing whitespace
-      Serial.println("Received command: " + command);
+    // Check for incoming data from the Android app
+    if (currentMillis - lastCommandCheck >= 100) { // Check for commands every 100 ms
+      lastCommandCheck = currentMillis;
+      if (SerialBT.available()) {
+        String command = SerialBT.readStringUntil('\n');  // Read command from Bluetooth
+        command.trim();  // Remove any leading/trailing whitespace
+        Serial.println("Received command: " + command);
 
-      // indicate data reception by blinking the LED once
-      blinkOnce();
+        // Indicate data reception by blinking the LED once
+        blinkOnce();
 
-      // respond to the specific OBD-II command
-      if (command == "010C") {  
-        int scaledRPM = rpm * 4;  // multiply the RPM to get the right OBD-II scaling
-        int A = scaledRPM / 256;  // first byte of the RPM response
-        int B = scaledRPM % 256;  // second byte of the RPM response
-        
-        String response = "41 0C " + padHex(A) + " " + padHex(B) + " >";  
-        
-        SerialBT.println(response);  // Send simulated RPM response
-        Serial.println("Sent RPM: " + String(rpm)); 
-      } 
-      else if (command == "0105") {  // Coolant temperature request
-        String response = "41 05 " + padHex(coolantTemp) + " >";
-        SerialBT.println(response);  // Send simulated coolant temp response
-        Serial.println("Sent Coolant Temperature: " + String(coolantTemp)); 
-      }
-      else if (command == "010F") {  // Air temperature request
-        String response = "41 0F " + padHex(airTemp) + " >";
-        SerialBT.println(response);  // Send simulated air temp response
-        Serial.println("Sent Air Temperature: " + String(airTemp)); 
-      }
-      else if (command == "ATZ") {  // ATZ command
-        SerialBT.println("OK >");    
-      } 
-      else if (command == "ATE0") {  // ATE0 command (Echo off)
-        SerialBT.println("OK >");    
-      } 
-      else if (command == "ATL0") {  // ATL0 command (Linefeeds off)
-        SerialBT.println("OK >");    
-      } 
-      else {  // for any other unrecognized command
-        SerialBT.println("ERROR >"); 
+        // Respond to specific OBD-II commands
+        if (command == "010C") {
+          int scaledRPM = rpm * 4;  // OBD-II scaling
+          int A = scaledRPM / 256;   // first byte of the RPM response
+          int B = scaledRPM % 256;   // second byte of the RPM response
+          String response = "41 0C " + padHex(A) + " " + padHex(B) + " >";
+          SerialBT.println(response);  // Send simulated RPM response
+          Serial.println("Sent RPM: " + String(rpm));
+        } 
+        else if (command == "0105") {  // Coolant temperature request
+          String response = "41 05 " + padHex(coolantTemp) + " >";
+          SerialBT.println(response);  // Send simulated coolant temp response
+          Serial.println("Sent Coolant Temperature: " + String(coolantTemp));
+        }
+        else if (command == "010F") {  // Air temperature request
+          String response = "41 0F " + padHex(airTemp) + " >";
+          SerialBT.println(response);  // Send simulated air temp response
+          Serial.println("Sent Air Temperature: " + String(airTemp));
+        }
+        else if (command == "ATZ" || command == "ATE0" || command == "ATL0") {  // Handle AT commands
+          SerialBT.println("OK >");
+        } 
+        else {  // For any other unrecognized command
+          SerialBT.println("ERROR >");
+        }
       }
     }
   } else {
-    // handle Bluetooth disconnected state
+    // Handle Bluetooth disconnected state
     if (isConnected) {
-      isConnected = false;  
+      isConnected = false;
       Serial.println("Bluetooth disconnected.");
+      digitalWrite(ledPin, HIGH);  // Turn on LED when disconnected
     }
-
-    // blink the LED when disconnected
-   blinkLed(currentMillis);
   }
 
-  delay(100);  
+  // Blink LED when disconnected
+  blinkLed(currentMillis);
 }
 
-// blink the LED when disconnected (blink every 500ms)
+// Blink the LED once when data is received
+void blinkOnce() {
+  digitalWrite(ledPin, HIGH);
+  delay(50);
+  digitalWrite(ledPin, LOW);
+}
+
+// Blink the LED when disconnected (blink every 500ms)
 void blinkLed(unsigned long currentMillis) {
   static unsigned long previousBlinkMillis = 0;
-  const long blinkInterval = 500;  
+  const long blinkInterval = 500;
 
   if (currentMillis - previousBlinkMillis >= blinkInterval) {
     previousBlinkMillis = currentMillis;
     digitalWrite(ledPin, !digitalRead(ledPin));
   }
-}
-
-// blink the LED once when data is received
-void blinkOnce() {
-  digitalWrite(ledPin, HIGH); 
-  delay(50);                 
-  digitalWrite(ledPin, LOW);   
 }

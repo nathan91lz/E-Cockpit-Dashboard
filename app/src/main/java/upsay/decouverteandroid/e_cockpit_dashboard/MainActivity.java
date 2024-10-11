@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                             //String deviceName = Bluetooth.getConnectedDeviceNameFromMacAddress(Bluetooth.macAddressFake);
 
 
-
                             if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
                                 // Optional: You could reset the button text back to default here
                                 refreshButton.setText("Not found");

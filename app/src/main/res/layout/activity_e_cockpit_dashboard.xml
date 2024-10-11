@@ -153,22 +153,64 @@
         android:textStyle="bold"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.267"
+        gauge:layout_constraintHorizontal_bias="0.0"
         gauge:layout_constraintStart_toEndOf="@+id/progressBar"
         gauge:layout_constraintTop_toBottomOf="@+id/gauge"
-        gauge:layout_constraintVertical_bias="0.009" />
+        gauge:layout_constraintVertical_bias="0.076" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:progressDrawable="@drawable/coolant_temp_progress_bar"
         android:layout_width="220dp"
         android:layout_height="35dp"
+        android:max="130"
+        android:min="50"
+        android:progress="80"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
         gauge:layout_constraintHorizontal_bias="0.357"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toBottomOf="@+id/gauge"
         gauge:layout_constraintVertical_bias="0.079" />
+
+    <LinearLayout
+        android:layout_width="220dp"
+        android:layout_height="19dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.36"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/progressBar"
+        gauge:layout_constraintVertical_bias="0.0">
+
+        <!-- Temperature labels (60, 80, 100, 120) -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            android:text="60" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="80" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="100" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="120" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
