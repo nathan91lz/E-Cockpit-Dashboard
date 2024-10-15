@@ -90,7 +90,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         gauge.setDrawingCacheBackgroundColor(faceColor);
 
         // >>>> TEST temp gauge
-        testLinearGauge();
+        //testLinearGauge();
 
 
         // try to connect to the OBDII device using the MAC address
@@ -117,7 +117,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                 Log.i(TAG, "AT command loop start");
 
-                //startRequestLoop();
+                startRequestLoop();
 
 
                 //bluetooth.readResponse();
