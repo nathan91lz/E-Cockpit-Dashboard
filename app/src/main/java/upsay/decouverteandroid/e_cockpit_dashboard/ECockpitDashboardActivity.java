@@ -28,6 +28,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private Bluetooth bluetooth;
     private Handler handler;
     private boolean isRequesting = false;
+
     private Button bpGotoMain;
     private TextView txtRPM;
     private TextView txtFuelLevel;
@@ -39,6 +40,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private TextView txtCoolantTemperature;
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
+
+    private boolean debugView = false; // true to debug
 
     private int rpmRequestCount = 0;
     private String response;
@@ -89,8 +92,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         int faceColor = ContextCompat.getColor(this, R.color.face);
         gauge.setDrawingCacheBackgroundColor(faceColor);
 
-        // >>>> TEST temp gauge
-        //testLinearGauge();
+        setDebugView(false);
+
+        // >>>> TEST gauge > incrementation
+        testRPMGauge();
+        testLinearGauge();
 
 
         // try to connect to the OBDII device using the MAC address
@@ -183,6 +189,27 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         // start the task for the first time
         handler.post(requestTask);
+    }
+
+    private void setDebugView(boolean debugView){
+        if(debugView){
+            txtFuelLevel.setVisibility(View.VISIBLE);
+            txtAmbientAirTemp.setVisibility(View.VISIBLE);
+            txtEngineOilTemp.setVisibility(View.VISIBLE);
+            txtCoolantTemp.setVisibility(View.VISIBLE);
+            txtIntakeAirTemp.setVisibility(View.VISIBLE);
+            txtRPM.setVisibility(View.VISIBLE);
+            bpGotoMain.setVisibility(View.VISIBLE);
+        }
+        else{
+            txtFuelLevel.setVisibility(View.GONE);
+            txtAmbientAirTemp.setVisibility(View.GONE);
+            txtEngineOilTemp.setVisibility(View.GONE);
+            txtCoolantTemp.setVisibility(View.GONE);
+            txtIntakeAirTemp.setVisibility(View.GONE);
+            txtRPM.setVisibility(View.GONE);
+            bpGotoMain.setVisibility(View.GONE);
+        }
     }
 
 
@@ -421,8 +448,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
-
-
     // process the response to extract RPM
     public String processRPMResponse(String response) {
         int rpm;
@@ -568,9 +593,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
 
 
-
-
-
     public String processIntakeAirTempResponse(String response) {
         // Normalize the response by trimming and removing unnecessary characters
         response = response.trim().replaceAll(">", "").replaceAll("<", "");
@@ -639,21 +661,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                             txtCoolantTemperature.setText(finalTemp + " °C");  // Update text
 
                             gaugeProgressBar.setProgress(finalTemp);
-
-//                            if (finalTemp < 80) {
-//                                gaugeProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_blue, null));
-//                                gaugeProgressBar.setProgress(40); // Example: Set to a base value
-//                            } else if (finalTemp >= 80 && finalTemp < 100) {
-//                                // Set the progress bar to yellow for temperatures from 60 to 100
-//                                gaugeProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_yellow, null));
-//                                gaugeProgressBar.setProgress(finalTemp);
-//                            } else {
-//                                // Set the progress bar to red for temperatures 100 and above
-//                                gaugeProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red, null));
-//                                gaugeProgressBar.setProgress(finalTemp);
-//                            }
-
-
                         }
                     });
 
@@ -669,7 +676,36 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
+    private void testRPMGauge() {
+        // Create a new thread for simulating temperature changes
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int rpm = 0; rpm <= 8000; rpm += 500) {
+                    // Capture the temp value for use inside the inner Runnable
+                    final int finalRPM = rpm;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Update your progress bar with the current temperature value
+                            Log.w(TAG, "Setting progress to " + finalRPM);
 
+                            gauge.moveToValue(finalRPM);  // smooth
+                            //gauge.setValue(Float.parseFloat(rpm));
+                            gauge.setLowerText(String.valueOf(finalRPM));
+                        }
+                    });
+
+                    // Sleep for 500 milliseconds to simulate a delay
+                    try {
+                        Thread.sleep(500); // 500 ms delay
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
 
 
 
