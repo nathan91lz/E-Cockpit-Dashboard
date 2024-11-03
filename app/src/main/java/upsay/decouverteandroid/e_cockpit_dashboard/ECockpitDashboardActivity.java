@@ -103,7 +103,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             this.googleMap = googleMap;
 
             // Set initial location (e.g., New York)
-            LatLng initialLocation = new LatLng(40.7128, -74.0060);
+            LatLng initialLocation = new LatLng(48.8317, 2.3879);
             googleMap.addMarker(new MarkerOptions().position(initialLocation).title("Initial Location"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 10));
         });
@@ -113,8 +113,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         setDebugView(false);
 
         // >>>> TEST gauge > incrementation
-        testRPMGauge();
-        testLinearGauge();
+
+        //testRPMGauge();
+        //testLinearGauge();
 
         // try to connect to the OBDII device using the MAC address
         // DEGUG UNCOMMENT LINE :
