@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-
 
     <application
         android:allowBackup="true"
@@ -24,8 +21,38 @@
         android:theme="@style/Theme.ECockpitDashboard"
         tools:targetApi="31">
 
-        <!-- launch splash screen before Main -->
-        <activity android:name=".SplashActivity"
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+
+        <!-- Declaration for Apache HTTP Legacy library -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY"
+            />
+
+        <!-- Activities -->
+        <activity
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps" />
+
+        <!-- Launch splash screen before Main -->
+        <activity
+            android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.ECockpitDashboard.Splash">
             <intent-filter>
@@ -34,17 +61,16 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity will be started after SplashActivity -->
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
 
-<!--        fragment e-cockpit layout-->
-        <activity android:name=".ECockpitDashboardActivity"
-            android:theme="@style/Theme.ECockpitDashboard.FullScreen"
-            android:exported="true"/>
-
+        <!-- Fragment e-cockpit layout -->
+        <activity
+            android:name=".ECockpitDashboardActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ECockpitDashboard.FullScreen" />
     </application>
 
 </manifest>

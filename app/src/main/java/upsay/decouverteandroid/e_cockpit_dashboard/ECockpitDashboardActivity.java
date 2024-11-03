@@ -20,8 +20,15 @@ import java.io.IOException;
 
 import android.util.Log;
 
-
 import de.nitri.gauge.Gauge;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class ECockpitDashboardActivity extends AppCompatActivity {
@@ -58,14 +65,12 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private String coolantTempExpectedResponse = "41 05";
     private String intakeAirTempExpectedResponse = "41 0F";
 
-
+    private MapView mapView;
+    private GoogleMap googleMap;
 
     private static final String TAG = "ECockpitDashboard";
 
     @Override
-
-
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_cockpit_dashboard);
@@ -92,12 +97,24 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         int faceColor = ContextCompat.getColor(this, R.color.face);
         gauge.setDrawingCacheBackgroundColor(faceColor);
 
+        mapView = findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(googleMap -> {
+            this.googleMap = googleMap;
+
+            // Set initial location (e.g., New York)
+            LatLng initialLocation = new LatLng(40.7128, -74.0060);
+            googleMap.addMarker(new MarkerOptions().position(initialLocation).title("Initial Location"));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 10));
+        });
+
+
+        // DEBBUGIN VEHICLE DATA ;
         setDebugView(false);
 
         // >>>> TEST gauge > incrementation
         testRPMGauge();
         testLinearGauge();
-
 
         // try to connect to the OBDII device using the MAC address
         // DEGUG UNCOMMENT LINE :
@@ -708,6 +725,30 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
 
 
 

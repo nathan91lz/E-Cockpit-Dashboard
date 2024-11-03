@@ -44,16 +44,16 @@
 
     <de.nitri.gauge.Gauge
         android:id="@+id/gauge"
-        android:layout_width="465dp"
-        android:layout_height="458dp"
+        android:layout_width="394dp"
+        android:layout_height="347dp"
         gauge:faceColor="0xFF222222"
         gauge:labelTextSize="42"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.0"
+        gauge:layout_constraintHorizontal_bias="0.108"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.135"
+        gauge:layout_constraintVertical_bias="0.144"
         gauge:lowerText="RPM"
         gauge:maxValue="8000"
         gauge:minValue="0"
@@ -183,6 +183,7 @@
         gauge:layout_constraintVertical_bias="0.079" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="220dp"
         android:layout_height="19dp"
         android:gravity="center"
@@ -219,6 +220,19 @@
             android:layout_height="wrap_content"
             android:text="120" />
     </LinearLayout>
+
+    <!-- Google Map View -->
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="450dp"
+        android:layout_height="259dp"
+        android:layout_marginTop="23dp"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.333"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
