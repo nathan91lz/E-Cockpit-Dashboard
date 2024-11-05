@@ -1,9 +1,12 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 
@@ -15,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
 
 
 public class Bluetooth {
@@ -29,7 +33,6 @@ public class Bluetooth {
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private static final String TAG = "ECockpitDashboard";
-
 
 
 

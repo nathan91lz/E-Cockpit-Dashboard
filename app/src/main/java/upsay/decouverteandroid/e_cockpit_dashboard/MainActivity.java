@@ -2,6 +2,7 @@ package upsay.decouverteandroid.e_cockpit_dashboard;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,22 +12,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-
 // used for wainting second
 import android.os.Handler;
 import android.os.Looper;
+
+// used for bluetooth permisions from manifest.xml
+import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
     private Button gotoECockpitFragment;
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
-
+    private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +53,16 @@ public class MainActivity extends AppCompatActivity {
         TextView txtAddressMacOwn = findViewById(R.id.txtAddressMacOwn);
         gotoECockpitFragment = findViewById(R.id.bpGotoCockpit);
 
+        // DEBUG :
+
 
         // BLUETOOTH EMULATOR :
         boolean isEmulator = Build.FINGERPRINT.contains("generic");
+
+        // check bluetooth permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            checkBluetoothPermissions();
+        }
 
         if (isEmulator) {
             // Simulate a Bluetooth connection and data
@@ -68,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
 
         } else {
+            // used to bypass main fragment /!\
+            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
+            startActivity(intent);
+
             // If not on an emulator, check Bluetooth state
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -144,7 +161,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void checkBluetoothPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
+                    REQUEST_BLUETOOTH_PERMISSIONS);
+        }
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
+            // Handle permission response if needed
+        }
+    }
 
 
 

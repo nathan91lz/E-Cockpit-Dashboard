@@ -114,8 +114,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         // >>>> TEST gauge > incrementation
 
-        //testRPMGauge();
-        //testLinearGauge();
+        testRPMGauge();
+        testLinearGauge();
 
         // try to connect to the OBDII device using the MAC address
         // DEGUG UNCOMMENT LINE :
