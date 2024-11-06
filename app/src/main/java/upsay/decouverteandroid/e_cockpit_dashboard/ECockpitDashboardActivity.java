@@ -108,50 +108,56 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 10));
         });
 
+        launchTest();
+
 
         // DEBBUGIN VEHICLE DATA ;
         setDebugView(false);
 
         // >>>> TEST gauge > incrementation
 
-        testRPMGauge();
-        testLinearGauge();
+        //testRPMGauge();
+        //testLinearGauge();
 
         // try to connect to the OBDII device using the MAC address
         // DEGUG UNCOMMENT LINE :
-        if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
-            try {
-                bluetooth.connect(macAddress);
-                Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show(); // message on screen
-
+        if (!MainActivity.emulatorMod) {
+            if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
                 try {
-                    bluetooth.initializeConnection();  // send initialization commands to the OBD device
-                    Log.i(TAG, "Initialization done");
-                } catch (InterruptedException e) {
-                    Toast.makeText(this, "Error initialization", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error initialization");
-                    throw new RuntimeException(e);
+                    bluetooth.connect(macAddress);
+                    Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show(); // message on screen
+
+                    try {
+                        bluetooth.initializeConnection();  // send initialization commands to the OBD device
+                        Log.i(TAG, "Initialization done");
+                    } catch (InterruptedException e) {
+                        Toast.makeText(this, "Error initialization", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error initialization");
+                        throw new RuntimeException(e);
+                    }
+
+
+
+                    //requestRPMData();
+                    //bluetooth.sendATCommand("010C\r");
+
+
+                    Log.i(TAG, "AT command loop start");
+
+                    startRequestLoop();
+
+
+                    //bluetooth.readResponse();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    txtRPM.setText("Error connecting to device");
                 }
-
-
-
-                //requestRPMData();
-                //bluetooth.sendATCommand("010C\r");
-
-
-                Log.i(TAG, "AT command loop start");
-
-                startRequestLoop();
-
-
-                //bluetooth.readResponse();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                txtRPM.setText("Error connecting to device");
+            } else {
+                txtRPM.setText("Error MAC Address : " + macAddress);  // display error if no device found or Bluetooth issue
             }
         } else {
-            txtRPM.setText("Error MAC Address : " + macAddress);  // display error if no device found or Bluetooth issue
+            Log.d(TAG, "Skipping Bluetooth connection logic as emulatorMod is true");
         }
 
 
@@ -241,7 +247,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             public void run() {
                 if (isRequesting) {
                     try {
-
                         if (rpmRequestCount < 4) {
                             // request and process RPM data
                             requestRPMData();
@@ -262,7 +267,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                         // increment or reset the RPM counter
                         rpmRequestCount = (rpmRequestCount + 1) % 6; // 4 RPM requests + 2 other data requests
-
 
                         // Request and process RPM data
                         //requestRPMData(); //OK
@@ -664,7 +668,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
 
     private void testLinearGauge() {
-        // Create a new thread for simulating temperature changes
+        // create a new thread for simulating temperature changes
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -695,7 +699,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
 
     private void testRPMGauge() {
-        // Create a new thread for simulating temperature changes
+        // create a new thread for simulating temperature changes
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -749,6 +753,67 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+
+    private void launchTest(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int rpm = 0; rpm <= 8000; rpm += 250) {
+                    // Capture the temp value for use inside the inner Runnable
+                    final int finalRPM = rpm;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Update your progress bar with the current temperature value
+                            Log.w(TAG, "Setting progress to " + finalRPM);
+
+                            gauge.moveToValue(finalRPM);  // smooth
+                            //gauge.setValue(Float.parseFloat(rpm));
+                            gauge.setLowerText(String.valueOf(finalRPM));
+                        }
+                    });
+
+                    // Sleep for 500 milliseconds to simulate a delay
+                    try {
+                        Thread.sleep(150); // 500 ms delay
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int temp = 50; temp <= 130; temp += 2) {
+                    // Capture the temp value for use inside the inner Runnable
+                    final int finalTemp = temp;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Update your progress bar with the current temperature value
+                            Log.w(TAG, "Setting progress to " + finalTemp);
+                            txtCoolantTemperature.setText(finalTemp + " °C");  // Update text
+
+                            gaugeProgressBar.setProgress(finalTemp);
+                        }
+                    });
+
+                    // Sleep for 500 milliseconds to simulate a delay
+                    try {
+                        Thread.sleep(100); // 500 ms delay
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+
+
     }
 
 

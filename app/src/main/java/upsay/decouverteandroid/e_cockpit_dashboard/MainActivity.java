@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
+    public static boolean emulatorMod = false;
+
     private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1;
 
     private static final String TAG = "MainActivity";
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         gotoBluetoothDeviceListFragment = findViewById(R.id.bpGotoBluetoothDevice);
 
         // DEBUG :
+        Log.i(TAG, "mac adress : " + macAddress);
+        Log.i(TAG, "device name: " + deviceName);
 
 
         // BLUETOOTH EMULATOR :
@@ -73,28 +77,67 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (isEmulator) {
+            emulatorMod = true;
             // Simulate a Bluetooth connection and data
-            Log.d("Bluetooth", "Running on an emulator, simulating Bluetooth connection");
-            String mockMacAddress = "00:11:22:33:44:55";
-            String mockDeviceName = "MockedOBDII";
+//            Log.d("Bluetooth", "Running on an emulator, simulating Bluetooth connection");
+//            String mockMacAddress = "00:11:22:33:44:55";
+//            String mockDeviceName = "MockedOBDII";
+//
+//            txtEtatBt.setText("Connected (Emulator)");
+//            txtAddressMac.setText("MAC Address: " + mockMacAddress + "\nDevice Name: " + mockDeviceName);
+//
+//            imgBtIndicator.setImageResource(R.drawable.green_circle);
+//            gotoECockpitFragment.setVisibility(View.VISIBLE);
 
-            txtEtatBt.setText("Connected (Emulator)");
-            txtAddressMac.setText("MAC Address: " + mockMacAddress + "\nDevice Name: " + mockDeviceName);
+            refreshButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    refreshButton.setText("Searching ...");
 
-            imgBtIndicator.setImageResource(R.drawable.green_circle);
-            gotoECockpitFragment.setVisibility(View.VISIBLE);
+                    // Delay the MAC address check and UI update by 1 second
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+                                // Optional: You could reset the button text back to default here
+                                refreshButton.setText("Not found");
+                                imgBtIndicator.setImageResource(R.drawable.red_circle);
+                                txtEtatBt.setText("Not paired");
+                                txtAddressMac.setText("MAC Address: ");
+                                refreshButton.setText("Refresh");
 
-            Log.i(TAG, "Here, set visible 1");
+                                // Hide the button if no device is connected
+                                gotoECockpitFragment.setVisibility(View.GONE);
+                            } else {
+                                imgBtIndicator.setImageResource(R.drawable.green_circle);
+                                txtEtatBt.setText("Paired (Emulator)");
+                                txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
 
-            macAddress = mockMacAddress;
-            deviceName = mockDeviceName;
+                                refreshButton.setText("Found");
+
+                                // Show the button if a device is connected
+                                gotoECockpitFragment.setVisibility(View.VISIBLE);
+                            }
+
+                            //String ownMacAddress = Bluetooth.getOwnMacAddres();
+                            //txtAddressMacOwn.setText("Your Bluetooth MAC Address: " + ownMacAddress);
+
+                            refreshButton.setText("Refresh");
+                        }
+                    }, 200);  // delay of 1 second
+                }
+            });
+
+            //macAddress = mockMacAddress;
+            //deviceName = mockDeviceName;
 
             // used to bypass main fragment
 //            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
 //            startActivity(intent);
 
-        } else {
+        } else if (!emulatorMod){
             // used to bypass main fragment /!\
+            // Auto run :
             Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
             startActivity(intent);
 

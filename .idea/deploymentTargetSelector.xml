@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-06T09:14:47.341128Z">
+        <DropdownSelection timestamp="2024-11-06T11:34:49.058150Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/lazarowicz/.android/avd/Archos_Core_70_3G_API_24.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=LS177BM73616810" />
             </handle>
           </Target>
         </DropdownSelection>
