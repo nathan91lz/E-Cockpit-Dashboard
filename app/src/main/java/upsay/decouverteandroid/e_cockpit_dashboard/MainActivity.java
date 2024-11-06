@@ -27,12 +27,19 @@ import android.os.Looper;
 // used for bluetooth permisions from manifest.xml
 import android.Manifest;
 
+import android.util.Log;
+
+
 public class MainActivity extends AppCompatActivity {
     private Button gotoECockpitFragment;
+    private Button gotoBluetoothDeviceListFragment;
+
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
     private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1;
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         TextView txtAddressMac = findViewById(R.id.txtAddressMac);
         TextView txtAddressMacOwn = findViewById(R.id.txtAddressMacOwn);
         gotoECockpitFragment = findViewById(R.id.bpGotoCockpit);
+        gotoBluetoothDeviceListFragment = findViewById(R.id.bpGotoBluetoothDevice);
 
         // DEBUG :
 
@@ -76,9 +84,14 @@ public class MainActivity extends AppCompatActivity {
             imgBtIndicator.setImageResource(R.drawable.green_circle);
             gotoECockpitFragment.setVisibility(View.VISIBLE);
 
+            Log.i(TAG, "Here, set visible 1");
+
+            macAddress = mockMacAddress;
+            deviceName = mockDeviceName;
+
             // used to bypass main fragment
-            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
+//            startActivity(intent);
 
         } else {
             // used to bypass main fragment /!\
@@ -138,23 +151,35 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // Setup fragment page: e-cockpit
+        // go to fragment page: e-cockpit
         gotoECockpitFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG, "gotoECockpitFragment Clicked");
                 Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
                 startActivity(intent);
             }
         });
 
-        // Initial check to set the visibility of the button on activity start
-        checkDeviceConnection();
+        // go to fragment page: e-cockpit
+        gotoBluetoothDeviceListFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "gotoBluetoothDeviceListFragment Clicked");
+                Intent intent = new Intent(MainActivity.this, BluetoothDeviceListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // initial check to set the visibility of the button on activity start
+        checkDeviceConnection(macAddress);
     }
 
-    private void checkDeviceConnection() {
-        String macAddress = Bluetooth.getConnectedDeviceMac();
+    private void checkDeviceConnection(String macAddress) {
         if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
             gotoECockpitFragment.setVisibility(View.GONE);
+        } else if (macAddress.equals("00:11:22:33:44:55")) {
+            gotoECockpitFragment.setVisibility(View.VISIBLE);
         } else {
             gotoECockpitFragment.setVisibility(View.VISIBLE);
         }

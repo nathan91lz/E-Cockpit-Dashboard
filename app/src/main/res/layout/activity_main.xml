@@ -73,6 +73,18 @@
         app:layout_constraintVertical_bias="0.055" />
 
 <!--button : go to e cockpit fragment -->
+
+    <Button
+        android:id="@+id/bpGotoBluetoothDevice"
+        android:layout_width="253dp"
+        android:layout_height="55dp"
+        android:text="Bluetooth Device Searcher"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.893" />
+
     <Button
         android:id="@+id/bpGotoCockpit"
         android:layout_width="144dp"

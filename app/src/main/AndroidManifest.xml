@@ -72,6 +72,11 @@
             android:name=".ECockpitDashboardActivity"
             android:exported="true"
             android:theme="@style/Theme.ECockpitDashboard.FullScreen" />
+
+        <!-- Fragment e-cockpit layout -->
+        <activity
+            android:name=".BluetoothDeviceListActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
