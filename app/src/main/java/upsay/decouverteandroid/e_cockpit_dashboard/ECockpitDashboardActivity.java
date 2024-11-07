@@ -102,7 +102,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         mapView.getMapAsync(googleMap -> {
             this.googleMap = googleMap;
 
-            // Set initial location (e.g., New York)
+            // set initial location
             LatLng initialLocation = new LatLng(48.8317, 2.3879);
             googleMap.addMarker(new MarkerOptions().position(initialLocation).title("Initial Location"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 10));
@@ -136,16 +136,12 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
 
-
-
                     //requestRPMData();
                     //bluetooth.sendATCommand("010C\r");
-
 
                     Log.i(TAG, "AT command loop start");
 
                     startRequestLoop();
-
 
                     //bluetooth.readResponse();
 
@@ -761,12 +757,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             @Override
             public void run() {
                 for (int rpm = 0; rpm <= 8000; rpm += 250) {
-                    // Capture the temp value for use inside the inner Runnable
+                    // capture the temp value for use inside the inner Runnable
                     final int finalRPM = rpm;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // Update your progress bar with the current temperature value
                             Log.w(TAG, "Setting progress to " + finalRPM);
 
                             gauge.moveToValue(finalRPM);  // smooth
@@ -775,7 +770,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         }
                     });
 
-                    // Sleep for 500 milliseconds to simulate a delay
+                    // sleep to simulate a delay
                     try {
                         Thread.sleep(150); // 500 ms delay
                     } catch (InterruptedException e) {

@@ -232,22 +232,16 @@ public class Bluetooth {
             return "Error: No data read from stream";  // Handle stream closure or no data
         }
 
-
-
-        // Convert the read bytes to a string
+        // convert the read bytes to a string
         String response = new String(buffer, 0, bytes);
 
-
-        // clean up the response by removing unwanted characters like carriage returns and '>'
-        //response = response.replace("\r", "").replace("\n", "").replace(">", "").trim();
-
-        // Check if the response contains the expected response code
+        // check if the response contains the expected response code
         if (response.contains(expectedResponseCode)) {
             Log.i(TAG, "Response returned: " + response);
-            return response; // Return the entire response if it matches
+            return response;
         } else {
             Log.w(TAG, "Response invalid: " + response);
-            return "Invalid response"; // Return invalid response if it does not match
+            return "Invalid response";
         }
     }
 
@@ -258,7 +252,7 @@ public class Bluetooth {
         // check if inputStream is not null before closing it
         if (inputStream != null) {
             inputStream.close();
-            inputStream = null; // reset to null after closing
+            inputStream = null;
         }
         if (outputStream != null) {
             outputStream.close();
@@ -297,18 +291,8 @@ public class Bluetooth {
         }
         return "02:00:00:00:00:00";
 
-
-//        WifiManager wimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//        String wifiMacAddress = wimanager.getConnectionInfo().getMacAddress();
-//        if (wifiMacAddress == null) {
-//            wifiMacAddress = "Device don't have mac address or wi-fi is disabled";
-//        }
-//
-//        return wifiMacAddress;
-
-//        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        String ownMacAddress = bluetoothAdapter != null ? bluetoothAdapter.getAddress() : "Unavailable";
-//        return ownMacAddress;
     }
+
+
 
 }

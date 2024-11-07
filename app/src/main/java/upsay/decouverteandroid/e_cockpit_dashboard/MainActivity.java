@@ -78,17 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (isEmulator) {
             emulatorMod = true;
-            // Simulate a Bluetooth connection and data
-//            Log.d("Bluetooth", "Running on an emulator, simulating Bluetooth connection");
-//            String mockMacAddress = "00:11:22:33:44:55";
-//            String mockDeviceName = "MockedOBDII";
-//
-//            txtEtatBt.setText("Connected (Emulator)");
-//            txtAddressMac.setText("MAC Address: " + mockMacAddress + "\nDevice Name: " + mockDeviceName);
-//
-//            imgBtIndicator.setImageResource(R.drawable.green_circle);
-//            gotoECockpitFragment.setVisibility(View.VISIBLE);
-
             refreshButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -99,14 +88,12 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
-                                // Optional: You could reset the button text back to default here
                                 refreshButton.setText("Not found");
                                 imgBtIndicator.setImageResource(R.drawable.red_circle);
                                 txtEtatBt.setText("Not paired");
                                 txtAddressMac.setText("MAC Address: ");
                                 refreshButton.setText("Refresh");
 
-                                // Hide the button if no device is connected
                                 gotoECockpitFragment.setVisibility(View.GONE);
                             } else {
                                 imgBtIndicator.setImageResource(R.drawable.green_circle);
@@ -115,21 +102,13 @@ public class MainActivity extends AppCompatActivity {
 
                                 refreshButton.setText("Found");
 
-                                // Show the button if a device is connected
                                 gotoECockpitFragment.setVisibility(View.VISIBLE);
                             }
-
-                            //String ownMacAddress = Bluetooth.getOwnMacAddres();
-                            //txtAddressMacOwn.setText("Your Bluetooth MAC Address: " + ownMacAddress);
-
                             refreshButton.setText("Refresh");
                         }
                     }, 200);  // delay of 1 second
                 }
             });
-
-            //macAddress = mockMacAddress;
-            //deviceName = mockDeviceName;
 
             // used to bypass main fragment
 //            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
@@ -138,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (!emulatorMod){
             // used to bypass main fragment /!\
             // Auto run :
-            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(MainActivity.this, ECockpitDashboardActivity.class);
+//            startActivity(intent);
 
             // If not on an emulator, check Bluetooth state
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -154,22 +133,13 @@ public class MainActivity extends AppCompatActivity {
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-//                            String macAddress = Bluetooth.getConnectedDeviceMac();
-//                            String deviceName = Bluetooth.getConnectedDeviceName();
-                            // USED WITH ARDUINO BT FAKE
-                            //String macAddress = Bluetooth.getConnectedDeviceMacFromMacAddress(Bluetooth.macAddressFake);
-                            //String deviceName = Bluetooth.getConnectedDeviceNameFromMacAddress(Bluetooth.macAddressFake);
-
-
                             if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
-                                // Optional: You could reset the button text back to default here
                                 refreshButton.setText("Not found");
                                 imgBtIndicator.setImageResource(R.drawable.red_circle);
                                 txtEtatBt.setText("Not paired");
                                 txtAddressMac.setText("MAC Address: ");
                                 refreshButton.setText("Refresh");
 
-                                // Hide the button if no device is connected
                                 gotoECockpitFragment.setVisibility(View.GONE);
                             } else {
                                 imgBtIndicator.setImageResource(R.drawable.green_circle);
@@ -178,16 +148,11 @@ public class MainActivity extends AppCompatActivity {
 
                                 refreshButton.setText("Found");
 
-                                // Show the button if a device is connected
                                 gotoECockpitFragment.setVisibility(View.VISIBLE);
                             }
-
-                            //String ownMacAddress = Bluetooth.getOwnMacAddres();
-                            //txtAddressMacOwn.setText("Your Bluetooth MAC Address: " + ownMacAddress);
-
                             refreshButton.setText("Refresh");
                         }
-                    }, 200);  // delay of 1 second
+                    }, 200);
                 }
             });
         }
@@ -242,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
-            // Handle permission response if needed
         }
     }
 
