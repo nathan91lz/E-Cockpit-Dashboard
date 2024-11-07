@@ -54,14 +54,15 @@
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
         gauge:layout_constraintVertical_bias="0.114"
-        gauge:lowerText="RPM"
-        gauge:maxValue="8000"
+        gauge:lowerText="x100"
+        gauge:initialValue="0"
+        gauge:maxValue="80"
         gauge:minValue="0"
         gauge:needleColor="0xFF990000"
         gauge:scaleColor="0xFF993300"
-        gauge:totalNicks="130"
+        gauge:totalNicks="120"
         gauge:upperText="C1 vts"
-        gauge:valuePerNick="100" />
+        gauge:valuePerNick="1" />
 
     <TextView
         android:id="@+id/txtCoolantTemp"

@@ -114,8 +114,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         // DEBBUGIN VEHICLE DATA ;
         setDebugView(false);
 
-        // >>>> TEST gauge > incrementation
-
+        // >>>> debug gauge > incrementation
         //testRPMGauge();
         //testLinearGauge();
 
@@ -485,8 +484,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
                 if (rpm >= 0 && rpm <= 10000) {
                     gauge.moveToValue(rpm);  // smooth
-                    //gauge.setValue(Float.parseFloat(rpm));
-                    gauge.setLowerText(String.valueOf(rpm));
+                    //gauge.setValue(Float.parseFloat(rpm/100));
+                    gauge.setLowerText(String.valueOf(rpm/100));
 
                     return String.valueOf(rpm);
                 } else {
@@ -764,7 +763,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         public void run() {
                             Log.w(TAG, "Setting progress to " + finalRPM);
 
-                            gauge.moveToValue(finalRPM);  // smooth
+                            gauge.moveToValue(finalRPM/100);  // smooth
                             //gauge.setValue(Float.parseFloat(rpm));
                             gauge.setLowerText(String.valueOf(finalRPM));
                         }
