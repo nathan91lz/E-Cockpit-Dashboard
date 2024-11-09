@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,13 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private TextView txtIntakeAirTemp;
     private TextView txtTemperature;
     private TextView txtCoolantTemperature;
+    private ImageView led1;
+    private ImageView led2;
+    private ImageView led3;
+    private ImageView led4;
+    private ImageView led5;
+
+
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
 
@@ -78,6 +86,8 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
 
+        bluetooth = new Bluetooth();
+        handler = new Handler(Looper.getMainLooper());
 
         bpGotoMain = findViewById(R.id.bpGotoMain);
         txtRPM = findViewById(R.id.txtRPM);
@@ -89,9 +99,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         txtTemperature = findViewById(R.id.txtTemperature);
         txtCoolantTemperature = findViewById(R.id.txtCoolantTemperature);
         gaugeProgressBar = findViewById(R.id.progressBar);
-
-        bluetooth = new Bluetooth();
-        handler = new Handler(Looper.getMainLooper());
+        led1 = findViewById(R.id.led1);
+        led2 = findViewById(R.id.led2);
+        led3 = findViewById(R.id.led3);
+        led4 = findViewById(R.id.led4);
+        led5 = findViewById(R.id.led5);
 
         gauge = findViewById((R.id.gauge));
         int faceColor = ContextCompat.getColor(this, R.color.face);
@@ -483,9 +495,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 Log.w(TAG, "RPM value: " + String.valueOf(rpm));
 
                 if (rpm >= 0 && rpm <= 10000) {
-                    gauge.moveToValue(rpm);  // smooth
+                    gauge.moveToValue(rpm/100);  // smooth
                     //gauge.setValue(Float.parseFloat(rpm/100));
-                    gauge.setLowerText(String.valueOf(rpm/100));
+                    gauge.setLowerText(String.valueOf(rpm));
+
+                    rpmLED(rpm);
 
                     return String.valueOf(rpm);
                 } else {
@@ -766,6 +780,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                             gauge.moveToValue(finalRPM/100);  // smooth
                             //gauge.setValue(Float.parseFloat(rpm));
                             gauge.setLowerText(String.valueOf(finalRPM));
+                            rpmLED(finalRPM);
                         }
                     });
 
@@ -806,8 +821,63 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             }
         }).start();
 
+    }
 
 
+    private void rpmLED(int rpm){
+        // reset all LEDs to gray as default
+        led1.setImageResource(R.drawable.gray_circle);
+        led2.setImageResource(R.drawable.gray_circle);
+        led3.setImageResource(R.drawable.gray_circle);
+        led4.setImageResource(R.drawable.gray_circle);
+        led5.setImageResource(R.drawable.gray_circle);
+
+        // set LED colors based on RPM thresholds
+        if (rpm > 6000) {
+            blinkLEDs();
+        } else if (rpm > 5500) {
+            led1.setImageResource(R.drawable.green_circle);
+            led2.setImageResource(R.drawable.green_circle);
+            led3.setImageResource(R.drawable.orange_circle);
+            led4.setImageResource(R.drawable.red_circle);
+            led5.setImageResource(R.drawable.red_circle);
+        } else if (rpm > 5000) {
+            led1.setImageResource(R.drawable.green_circle);
+            led2.setImageResource(R.drawable.green_circle);
+            led3.setImageResource(R.drawable.orange_circle);
+            led4.setImageResource(R.drawable.red_circle);
+        } else if (rpm > 4500) {
+            led1.setImageResource(R.drawable.green_circle);
+            led2.setImageResource(R.drawable.green_circle);
+            led3.setImageResource(R.drawable.orange_circle);
+        } else if (rpm > 4000) {
+            led1.setImageResource(R.drawable.green_circle);
+            led2.setImageResource(R.drawable.green_circle);
+        } else if (rpm > 3600) {
+            led1.setImageResource(R.drawable.green_circle);
+        }
+    }
+
+
+    private void blinkLEDs() {
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            private boolean isBlue = true;
+
+            @Override
+            public void run() {
+                int color = isBlue ? R.drawable.blue_circle : R.drawable.gray_circle;
+                led1.setImageResource(color);
+                led2.setImageResource(color);
+                led3.setImageResource(color);
+                led4.setImageResource(color);
+                led5.setImageResource(color);
+                isBlue = !isBlue;
+                handler.postDelayed(this, 300);
+            }
+        };
+
+        handler.post(runnable);
     }
 
 

@@ -47,6 +47,7 @@
         android:layout_width="394dp"
         android:layout_height="347dp"
         gauge:faceColor="0xFF222222"
+        gauge:initialValue="0"
         gauge:labelTextSize="42"
         gauge:layout_constraintBottom_toBottomOf="parent"
         gauge:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +56,6 @@
         gauge:layout_constraintTop_toTopOf="parent"
         gauge:layout_constraintVertical_bias="0.114"
         gauge:lowerText="x100"
-        gauge:initialValue="0"
         gauge:maxValue="80"
         gauge:minValue="0"
         gauge:needleColor="0xFF990000"
@@ -64,16 +64,72 @@
         gauge:upperText="C1 vts"
         gauge:valuePerNick="1" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        gauge:layout_constraintBottom_toTopOf="@+id/progressBar"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="0.994"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/led1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/gray_circle" />
+
+        <ImageView
+            android:id="@+id/led2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/gray_circle" />
+
+        <ImageView
+            android:id="@+id/led3"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/gray_circle" />
+
+        <ImageView
+            android:id="@+id/led4"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/gray_circle" />
+
+        <ImageView
+            android:id="@+id/led5"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/gray_circle" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/txtCoolantTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
+        android:layout_marginBottom="44dp"
         android:text="Coolant Temp : "
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.236"
+        gauge:layout_constraintHorizontal_bias="0.136"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toBottomOf="@+id/txtAmbientAirTemp"
+        gauge:layout_constraintVertical_bias="0.41"
         tools:visibility="gone" />
 
     <TextView
@@ -133,10 +189,12 @@
         android:textStyle="bold"
         gauge:layout_constraintBottom_toTopOf="@+id/gauge"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.053"
+        gauge:layout_constraintHorizontal_bias="0.062"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.121" />
+        gauge:layout_constraintVertical_bias="1.0" />
+
+    <!-- Google Map View -->
 
     <TextView
         android:id="@+id/txtTemperature"
@@ -147,12 +205,10 @@
         android:textStyle="bold"
         gauge:layout_constraintBottom_toTopOf="@+id/gauge"
         gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.011"
+        gauge:layout_constraintHorizontal_bias="0.0"
         gauge:layout_constraintStart_toEndOf="@+id/txtTemperatureText"
         gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="0.121" />
-
-    <!-- Google Map View -->
+        gauge:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/txtCoolantTemperature"
@@ -167,7 +223,7 @@
         gauge:layout_constraintHorizontal_bias="0.0"
         gauge:layout_constraintStart_toEndOf="@+id/progressBar"
         gauge:layout_constraintTop_toBottomOf="@+id/gauge"
-        gauge:layout_constraintVertical_bias="0.049" />
+        gauge:layout_constraintVertical_bias="0.023" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -183,7 +239,7 @@
         gauge:layout_constraintHorizontal_bias="0.476"
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toBottomOf="@+id/gauge"
-        gauge:layout_constraintVertical_bias="0.02" />
+        gauge:layout_constraintVertical_bias="0.049" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
