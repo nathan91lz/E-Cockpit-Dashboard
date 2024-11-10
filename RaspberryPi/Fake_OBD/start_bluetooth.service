@@ -1,0 +1,16 @@
+[Unit]
+Description=Start Bluetooth OBD2 Script
+After=bluetooth.target
+StartLimitIntervalSec=3000
+StartLimitBurst=5
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/lazarowicz/Projects/ECockpitDashboard_Android/start_bluetooth.sh
+Restart=on-failure
+User=lazarowicz
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target
+
