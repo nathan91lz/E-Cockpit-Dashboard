@@ -1,59 +1,59 @@
 "plantuml.dotPath": "/opt/homebrew/bin/dot" 
 // 'options' + 'D' for rendering
 @startuml
+
+
 actor "User" as User
-participant "E-Cockpit Dashboard" as ECockpit
-participant "OBDII" as OBDII
-participant "Bluetooth Device" as BTDevice
-participant "Handler" as Handler
+participant ":ECockpitDashboardActivity" as ECockpit
+participant "obd2:OBDII" as OBDII
+participant "bluetooth:Bluetooth" as BTDevice
+participant "handler:Handler" as Handler
 
-User -> ECockpit: Open App
-ECockpit -> BTDevice: Connect to Bluetooth Device (OBDII MAC address)
-alt if connection is successful
-    BTDevice --> ECockpit: Connection Successful
-    ECockpit -> User: Display "Connected to OBDII device"
-else if connection fails
-    BTDevice --> ECockpit: Connection Failed
-    ECockpit -> User: Display Connection Error
-end
 
-User -> ECockpit: Initialize Communication
+User -> ECockpit: gotoECockpitFragment.setOnClickListener
+ECockpit -> BTDevice: bluetooth.connect(macAddress)
 ECockpit -> OBDII: initializeConnection()
-OBDII -> BTDevice: Send AT Command: "ATZ" (Reset)
-OBDII -> BTDevice: Send AT Command: "ATE0" (Echo Off)
-OBDII -> BTDevice: Send AT Command: "ATL0" (Linefeed Off)
-BTDevice --> OBDII: Acknowledgment
-OBDII --> ECockpit: Initialization Complete
-ECockpit -> User: Log "Initialization done"
+OBDII -> BTDevice: sendATCommand(atzCommand)
+OBDII -> BTDevice: waitForPrompt()
+OBDII -> BTDevice: sendATCommand(ate0Command)
+OBDII -> BTDevice: waitForPrompt()
+OBDII -> BTDevice: sendATCommand(atl0Command)
+OBDII -> BTDevice: waitForPrompt()
+BTDevice --> ECockpit: Log.i(Bluetooth, "Initialization done");
 
-User -> ECockpit: Start Request Loop
-ECockpit -> OBDII: startRequestLoop()
+
 activate Handler
-Handler -> OBDII: Run requestTask loop
+Handler -> OBDII: handler.post(requestTask)
 
-loop Every 300 ms
+    ECockpit -> OBDII: startRequestLoop()
+
+loop isRequesting = true
     alt if rpmRequestCount < 4
-        OBDII -> BTDevice: Send Command: "010C\n" (Request RPM)
-        BTDevice --> OBDII: Receive Response: "41 0C XX YY"
-        OBDII -> OBDII: processRPMResponse("41 0C XX YY")
-        OBDII --> ECockpit: Update RPM Display
-        ECockpit -> User: Log "Request ongoing... (RPM)"
+        OBDII -> BTDevice: sendATCommand(rpmCommand)
+        BTDevice -> OBDII: response = waitForPrompt()
+        OBDII -> OBDII: processRPMResponse(response)
+        OBDII --> OBDII: return String.valueOf(rpm)
+        OBDII -> ECockpit: updateRPM(rpm)
+        ECockpit -> User: gauge.moveToValue(rpm/100)
+        ECockpit -> User: rpmLED(rpm)
     else if rpmRequestCount == 4
-        OBDII -> BTDevice: Send Command for Coolant Temp
-        BTDevice --> OBDII: Receive Coolant Temp Response
-        OBDII -> OBDII: processCoolantTempResponse()
-        OBDII --> ECockpit: Update Coolant Temp Display
-        ECockpit -> User: Log "Request ongoing... (Coolant Temperature)"
+        OBDII -> BTDevice: sendATCommand(coolantTempCommand)
+        BTDevice -> OBDII: response = waitForPrompt()
+        OBDII -> OBDII: processRPMResponse(response)
+        OBDII --> OBDII: return String.valueOf(coolantTemp)
+        OBDII -> ECockpit: updateCoolantTemp(coolantTemp)
+        ECockpit -> User: gaugeProgressBar.setProgress(coolantTemp)
     else if rpmRequestCount == 5
-        OBDII -> BTDevice: Send Command for Intake Air Temp
-        BTDevice --> OBDII: Receive Intake Air Temp Response
-        OBDII -> OBDII: processIntakeAirTempResponse()
-        OBDII --> ECockpit: Update Intake Air Temp Display
-        ECockpit -> User: Log "Request ongoing... (Intake Air Temperature)"
+        OBDII -> BTDevice: sendATCommand(intakeAirTempCommand)
+        BTDevice -> OBDII: response = waitForPrompt()
+        OBDII -> OBDII: porcessIntakeAirTemp(response)
+        OBDII --> OBDII: return String.valueOf(intakeAirTemp)
+        OBDII -> ECockpit: updateIntakeAirTemp(intakeAirTemp)
+        ECockpit -> User: gtxtTemperature.setText(temperature + " °C")(intakeAirTemp)
     end
-    OBDII -> OBDII: Increment rpmRequestCount (mod 6)
+    OBDII -> OBDII: rpmRequestCount = (rpmRequestCount + 1) % 6
     
-    alt if an error occurs
+    alt if !isRequesting
         OBDII -> OBDII: Log Error
         OBDII --> ECockpit: Display "Error retrieving data"
         ECockpit -> Handler: stopRequestLoop()

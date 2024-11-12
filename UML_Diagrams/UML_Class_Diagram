@@ -1,6 +1,13 @@
 "plantuml.dotPath": "/opt/homebrew/bin/dot" 
 // 'options' + 'D' for rendering
 @startuml
+' Apply UML2 component style for compactness
+skinparam componentStyle uml2
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam useGUILegend false
+
 
 ' Define the OBDII class
 class OBDII {
@@ -59,10 +66,22 @@ class MainActivity {
     + onRequestPermissionResult() : void
 }
 
+' Add interface icons for activity classes
+interface IMainActivity
+interface IBluetoothDeviceListActivity
+interface IECockpitDashboard
+
+' Relationships with interface icons for each activity class
+MainActivity - IMainActivity : <<Activity>>
+BluetoothDeviceListActivity - IBluetoothDeviceListActivity : <<Activity>>
+ECockpitDashboard - IECockpitDashboard : <<Activity>>
+
 ' Define relationships
 OBDII "0..*" --> ECockpitDashboard
 MainActivity "1..*" --> BluetoothDeviceListActivity
 MainActivity "1..1" --> ECockpitDashboard
 Bluetooth "1..*" --> OBDII
+Bluetooth "1..*" --> BluetoothDeviceListActivity
 
 @enduml
+
