@@ -1,0 +1,20 @@
+"plantuml.dotPath": "/opt/homebrew/bin/dot" 
+@startuml
+
+actor "Driver" as Driver
+actor "Vehicle (ECU)" as ECU <<Secondary>>
+
+rectangle "E-Cockpit Dashboard" {
+    usecase "Visualize Vehicle Information" as VisualizeInfo
+    usecase "Bluetooth Connection" as BluetoothConnection
+    usecase "Retrieve Information via Serial BT" as RetrieveInfo
+    usecase "Useful to Driver" as UsefulToDriver
+}
+
+Driver --> VisualizeInfo : "View Data"
+Driver --> UsefulToDriver : "Receive Assistance"
+BluetoothConnection .> RetrieveInfo : <<include>>
+VisualizeInfo .> RetrieveInfo : <<include>>
+ECU --> RetrieveInfo : "Provide Data"
+
+@enduml
