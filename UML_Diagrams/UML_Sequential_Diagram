@@ -1,0 +1,66 @@
+"plantuml.dotPath": "/opt/homebrew/bin/dot" 
+// 'options' + 'D' for rendering
+@startuml
+actor "User" as User
+participant "E-Cockpit Dashboard" as ECockpit
+participant "OBDII" as OBDII
+participant "Bluetooth Device" as BTDevice
+participant "Handler" as Handler
+
+User -> ECockpit: Open App
+ECockpit -> BTDevice: Connect to Bluetooth Device (OBDII MAC address)
+alt if connection is successful
+    BTDevice --> ECockpit: Connection Successful
+    ECockpit -> User: Display "Connected to OBDII device"
+else if connection fails
+    BTDevice --> ECockpit: Connection Failed
+    ECockpit -> User: Display Connection Error
+end
+
+User -> ECockpit: Initialize Communication
+ECockpit -> OBDII: initializeConnection()
+OBDII -> BTDevice: Send AT Command: "ATZ" (Reset)
+OBDII -> BTDevice: Send AT Command: "ATE0" (Echo Off)
+OBDII -> BTDevice: Send AT Command: "ATL0" (Linefeed Off)
+BTDevice --> OBDII: Acknowledgment
+OBDII --> ECockpit: Initialization Complete
+ECockpit -> User: Log "Initialization done"
+
+User -> ECockpit: Start Request Loop
+ECockpit -> OBDII: startRequestLoop()
+activate Handler
+Handler -> OBDII: Run requestTask loop
+
+loop Every 300 ms
+    alt if rpmRequestCount < 4
+        OBDII -> BTDevice: Send Command: "010C\n" (Request RPM)
+        BTDevice --> OBDII: Receive Response: "41 0C XX YY"
+        OBDII -> OBDII: processRPMResponse("41 0C XX YY")
+        OBDII --> ECockpit: Update RPM Display
+        ECockpit -> User: Log "Request ongoing... (RPM)"
+    else if rpmRequestCount == 4
+        OBDII -> BTDevice: Send Command for Coolant Temp
+        BTDevice --> OBDII: Receive Coolant Temp Response
+        OBDII -> OBDII: processCoolantTempResponse()
+        OBDII --> ECockpit: Update Coolant Temp Display
+        ECockpit -> User: Log "Request ongoing... (Coolant Temperature)"
+    else if rpmRequestCount == 5
+        OBDII -> BTDevice: Send Command for Intake Air Temp
+        BTDevice --> OBDII: Receive Intake Air Temp Response
+        OBDII -> OBDII: processIntakeAirTempResponse()
+        OBDII --> ECockpit: Update Intake Air Temp Display
+        ECockpit -> User: Log "Request ongoing... (Intake Air Temperature)"
+    end
+    OBDII -> OBDII: Increment rpmRequestCount (mod 6)
+    
+    alt if an error occurs
+        OBDII -> OBDII: Log Error
+        OBDII --> ECockpit: Display "Error retrieving data"
+        ECockpit -> Handler: stopRequestLoop()
+    end
+end
+
+deactivate Handler
+@enduml
+
+
