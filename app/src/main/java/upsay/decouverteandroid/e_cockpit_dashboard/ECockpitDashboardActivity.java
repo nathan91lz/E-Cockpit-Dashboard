@@ -33,12 +33,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class ECockpitDashboardActivity extends AppCompatActivity {
+    // MOVED > OBDII
     private Bluetooth bluetooth;
     private Handler handler;
     private boolean isRequesting = false;
 
     private Button bpGotoMain;
-    private TextView txtRPM;
+    private TextView txtRPM; // used for debug
     private TextView txtFuelLevel;
     private TextView txtAmbientAirTemp;
     private TextView txtEngineOilTemp;
@@ -58,6 +59,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private boolean debugView = false; // true to debug
 
+    // MOVED > OBDII
     private int rpmRequestCount = 0;
     private String response;
     private String rpmValue;
@@ -66,6 +68,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private ProgressBar gaugeProgressBar;
 
+    // MOVE > OBDII
     private String rmpExpectedResponse = "41 0C";
     private String fuelLevelExpectedResponse = "41 2F";
     private String ambientAirTempExpectedResponse = "41 46";
@@ -75,6 +78,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private MapView mapView;
     private GoogleMap googleMap;
+
+    private Handler blinkHandler = new Handler();
+    private Runnable blinkRunnable;
+    private boolean isBlinking = false;
 
     private static final String TAG = "ECockpitDashboard";
 
@@ -183,12 +190,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         });
     }
 
-
+    // MOVE > OBDII
     // setup serial comm
     private void setupCommunication() {
-
         isRequesting = true;
-
         Runnable requestTask = new Runnable() {
             @Override
             public void run() {
@@ -222,6 +227,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         handler.post(requestTask);
     }
 
+
     private void setDebugView(boolean debugView){
         if(debugView){
             txtFuelLevel.setVisibility(View.VISIBLE);
@@ -244,7 +250,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
-
     // start a loop to request data every 200ms
     private void startRequestLoop() {
         isRequesting = true;
@@ -256,6 +261,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     try {
                         if (rpmRequestCount < 4) {
                             // request and process RPM data
+                            //OBDII.rpmRequest();
                             requestRPMData();
                             Log.i(TAG, "Request ongoing... (RPM)");
                         } else {
@@ -780,7 +786,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                             gauge.moveToValue(finalRPM/100);  // smooth
                             //gauge.setValue(Float.parseFloat(rpm));
                             gauge.setLowerText(String.valueOf(finalRPM));
-                            rpmLED(finalRPM);
+                            //rpmLED(finalRPM);
                         }
                     });
 
@@ -825,6 +831,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
 
     private void rpmLED(int rpm){
+        if (isBlinking && rpm <= 6000) {
+            stopBlinking();
+        }
         // reset all LEDs to gray as default
         led1.setImageResource(R.drawable.gray_circle);
         led2.setImageResource(R.drawable.gray_circle);
@@ -834,7 +843,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         // set LED colors based on RPM thresholds
         if (rpm > 6000) {
-            blinkLEDs();
+            startBlinking();
         } else if (rpm > 5500) {
             led1.setImageResource(R.drawable.green_circle);
             led2.setImageResource(R.drawable.green_circle);
@@ -859,9 +868,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
-    private void blinkLEDs() {
-        final Handler handler = new Handler();
-        final Runnable runnable = new Runnable() {
+    private void startBlinking() {
+        if (isBlinking) return;
+
+        isBlinking = true;
+        blinkRunnable = new Runnable() {
             private boolean isBlue = true;
 
             @Override
@@ -873,11 +884,18 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                 led4.setImageResource(color);
                 led5.setImageResource(color);
                 isBlue = !isBlue;
-                handler.postDelayed(this, 300);
+                blinkHandler.postDelayed(this, 300); // Delay for blinking
             }
         };
+        blinkHandler.post(blinkRunnable);
+    }
 
-        handler.post(runnable);
+
+    private void stopBlinking() {
+        if (isBlinking && blinkRunnable != null) {
+            blinkHandler.removeCallbacks(blinkRunnable);
+            isBlinking = false;
+        }
     }
 
 
