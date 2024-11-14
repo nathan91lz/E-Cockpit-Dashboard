@@ -173,7 +173,6 @@ public class OBDII {
 
                 Log.i(TAG, "Coolant Temperature value: " + coolantTemp);
 
-                // delete and use ...
                 if (coolantTemp >= -40 && coolantTemp <= 215) {
                     dashboard.setCoolantTemp(coolantTemp);
 
@@ -191,58 +190,41 @@ public class OBDII {
 
 
     public String processIntakeAirTempResponse(String response) {
-        // Normalize the response by trimming and removing unnecessary characters
-        response = response.trim().replaceAll(">", "").replaceAll("<", "");
+        int intakeAirTemp;
 
-        // Check if the response contains the expected prefix for intake air temperature
+        Log.i(TAG, "Response in function: " + response);
+
+        // check if the response contains '41 0F'
         if (response.contains("41 0F")) {
             try {
-                // Split the response by spaces
-                String[] parts = response.split("\\s+");
-                int index = -1;
+                // extract the hex value after '41 0F'
+                String hexTemp = response.substring(6, 8); // get the hex value after '41 0F'
 
-                // Search for the "41 0F" prefix in the response
-                for (int i = 0; i < parts.length; i++) {
-                    if (i + 1 < parts.length && "41".equals(parts[i]) && "0F".equals(parts[i + 1])) {
-                        index = i + 2; // The hex value should be after "41 0F"
-                        break;
-                    }
-                }
+                Log.i(TAG, "Intake Air Temperature hex: " + hexTemp);
 
-                // Ensure index is valid and within the bounds of the response
-                if (index != -1 && index < parts.length) {
-                    String hexValue = parts[index];
+                // convert hex to integer
+                intakeAirTemp = Integer.parseInt(hexTemp, 16); // Convert to int
 
-                    // Convert hex to an integer
-                    int temperatureHex = Integer.parseInt(hexValue, 16);
+                // calculate the intake air temperature in degrees
+                intakeAirTemp -= 40;
 
-                    // Calculate temperature
-                    int temperature = temperatureHex - 40;
-                    Log.i(TAG, "Intake Air Temperature: " + temperature + "°C");
+                Log.i(TAG, "Intake Air Temperature value: " + intakeAirTemp + "°C");
 
-                    // Display the temperature correctly
-                    // delete and use ...
-                    if (temperature >= -40 && temperature <= 215) {
-                        //txtTemperature.setText(temperature + " °C");
-                        dashboard.setIntakeAirTemp(temperature);
-                        return String.valueOf(temperature);
-                    } else {
-                        return "Invalid Intake Air Temp value: Out of range";
-                    }
+                if (intakeAirTemp >= -40 && intakeAirTemp <= 215) {
+                    dashboard.setIntakeAirTemp(intakeAirTemp); 
+                    return String.valueOf(intakeAirTemp);
                 } else {
-                    return "Error response: '41 0F' found, but no temperature data";
+                    return "Invalid Intake Air Temp value: Out of range";
                 }
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "Invalid hex value in response: " + response, e);
-                return "Error - Invalid hex value";
             } catch (Exception e) {
-                Log.e(TAG, "An unexpected error occurred: " + e.getMessage(), e);
-                return "Error -1"; // -1 on general error
+                e.printStackTrace();
+                return "Error -1"; // Return -1 on error
             }
         }
-        return "Error response: '41 0F' not found";
+        return "Error response value: '41 0F' not found"; // Return error if '41 0F' is not found
     }
-    
+
+
 
 
 }
