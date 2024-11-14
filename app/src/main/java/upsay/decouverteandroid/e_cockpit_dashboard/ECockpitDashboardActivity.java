@@ -33,8 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class ECockpitDashboardActivity extends AppCompatActivity {
-    // MOVED > OBDII
     private Bluetooth bluetooth;
+    private OBDII obd2;
     private Handler handler;
     private boolean isRequesting = false;
 
@@ -59,10 +59,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     private boolean debugView = false; // true to debug
 
-    // MOVED > OBDII
     private int rpmRequestCount = 0;
-    private String response;
-    private String rpmValue;
 
     private Gauge gauge;
 
@@ -143,25 +140,10 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
                 try {
                     bluetooth.connect(macAddress);
+                    obd2 = new OBDII(bluetooth, this); // pass Bluetooth and activity to OBDII constructor
                     Toast.makeText(this, "Connected to OBDII device", Toast.LENGTH_SHORT).show(); // message on screen
 
-                    try {
-                        bluetooth.initializeConnection();  // send initialization commands to the OBD device
-                        Log.i(TAG, "Initialization done");
-                    } catch (InterruptedException e) {
-                        Toast.makeText(this, "Error initialization", Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "Error initialization");
-                        throw new RuntimeException(e);
-                    }
-
-                    //requestRPMData();
-                    //bluetooth.sendATCommand("010C\r");
-
-                    Log.i(TAG, "AT command loop start");
-
-                    startRequestLoop();
-
-                    //bluetooth.readResponse();
+                    initializeOBDConnection();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -190,41 +172,18 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         });
     }
 
-    // MOVE > OBDII
-    // setup serial comm
-    private void setupCommunication() {
-        isRequesting = true;
-        Runnable requestTask = new Runnable() {
-            @Override
-            public void run() {
-                if (isRequesting) {
-                    try {
 
-                        if (bluetooth != null) {
-                            bluetooth.initializeConnection();  // send the RPM request command
-
-                        } else {
-                            txtRPM.setText("Bluetooth object is null");
-                        }
-
-                        Log.i(TAG, "Request ongoing...");
-
-                        // schedule the next execution
-                        handler.postDelayed(this, 50);
-                    } catch (Exception e) {
-                        // log the error and display a message on the UI
-                        Log.e(TAG, "Error during data request", e);
-                        runOnUiThread(() -> txtRPM.setText("Error retrieving data"));
-
-                        // optionally, stop the loop on failure
-                        stopRequestLoop();
-                    }
-                }
+    private void initializeOBDConnection() {
+        if (obd2 != null) {
+            try {
+                obd2.initializeConnection();
+                startRequestLoop();
+            } catch (InterruptedException | IOException e) {
+                Log.e("ECockpitDashboard", "OBD-II initialization interrupted: " + e.getMessage());
             }
-        };
-
-        // start the task for the first time
-        handler.post(requestTask);
+        } else {
+            Log.e("ECockpitDashboard", "OBD-II device not initialized.");
+        }
     }
 
 
@@ -261,32 +220,26 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                     try {
                         if (rpmRequestCount < 4) {
                             // request and process RPM data
-                            //OBDII.rpmRequest();
-                            requestRPMData();
+                            //requestRPMData(); //old
+                            obd2.rpmRequest();
                             Log.i(TAG, "Request ongoing... (RPM)");
                         } else {
                             // call alternate data requests after 4 RPM requests
                             switch (rpmRequestCount) {
                                 case 4:
-                                    requestCoolantTempData();
+                                    //requestCoolantTempData(); // old
+                                    obd2.requestCoolantTempData();
                                     Log.i(TAG, "Request ongoing... (Coolant Temperature)");
                                     break;
                                 case 5:
-                                    requestIntakeAirTempData();
+                                    //requestIntakeAirTempData(); //old
+                                    obd2.requestIntakeAirTempData();
                                     Log.i(TAG, "Request ongoing... (Intake Air Temperature)");
                                     break;
                             }
                         }
-
                         // increment or reset the RPM counter
                         rpmRequestCount = (rpmRequestCount + 1) % 6; // 4 RPM requests + 2 other data requests
-
-                        // Request and process RPM data
-                        //requestRPMData(); //OK
-                        //requestCoolantTempData(); //OK
-                        //requestIntakeAirTempData(); //OK
-
-                        //Log.i(TAG, "Request ongoing...");
 
                         // add a delay before the next request
                         handler.postDelayed(this, 300); // between 200 to 300ms
@@ -314,371 +267,26 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     }
 
 
-    // send the RPM request to the OBD device and update the UI
-    private void requestRPMData() {
-        try {
-            if (bluetooth != null) {
-                bluetooth.requestRPM();  // send the RPM request command
-                response = bluetooth.waitForPrompt();  // wait for the response until prompt '>' is received
-
-                if (response == null || response.isEmpty()) {
-                    txtRPM.setText("ERROR, empty response");
-                    return;
-                }
-
-                Log.i(TAG, "Response gotten: " + response);
-                rpmValue = processRPMResponse(response);  // process the response to get RPM
-                txtRPM.setText("RPM: " + rpmValue);  // display the RPM value
-            } else {
-                txtRPM.setText("Bluetooth object is null");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            txtRPM.setText("ERROR");
-        }
+    // check if works
+    public void setRPM(int rpm){
+        gauge.moveToValue(rpm / 100);  // smooth
+        //gauge.setValue(Float.parseFloat(rpm/100));
+        gauge.setLowerText(String.valueOf(rpm));
+        txtRPM.setText("RPM: " + rpm);
+        rpmLED(rpm);
     }
 
 
-    private void requestFuelLevelData() {
-        try {
-            if (bluetooth != null) {
-                bluetooth.requestFuelLevel();  // send the Fuel Level request command
-                response = bluetooth.readResponse(fuelLevelExpectedResponse);  // read the response from the OBD device
-
-                try {
-                    Thread.sleep(200); // adjust the delay as necessary
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Log.i(TAG, "Response: " + response);
-
-                if (response == null || response.isEmpty()) {
-                    txtFuelLevel.setText("ERROR, empty response");
-                    return;
-                }
-
-                String fuelLevel = processFuelLevelResponse(response);  // process the response
-                txtFuelLevel.setText("Fuel Level: " + fuelLevel);  // display the fuel level
-
-            } else {
-                txtFuelLevel.setText("Bluetooth object is null");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            txtFuelLevel.setText("ERROR");
-        }
+    // check if works
+    public void setCoolantTemp(int coolantTemp) {
+        txtCoolantTemperature.setText(coolantTemp + " °C");
+        gaugeProgressBar.setProgress(coolantTemp);
     }
 
 
-    private void requestAmbientAirTempData() {
-        try {
-            if (bluetooth != null) {
-                bluetooth.requestAmbientAirTemp();  // send the Ambient Air Temp request command
-                response = bluetooth.readResponse(ambientAirTempExpectedResponse);  // read the response from the OBD device
-
-                try {
-                    Thread.sleep(200); // adjust the delay as necessary
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Log.i(TAG, "Response: " + response);
-
-                if (response == null || response.isEmpty()) {
-                    txtAmbientAirTemp.setText("ERROR, empty response");
-                    return;
-                }
-
-                String airTemp = processAmbientAirTempResponse(response);  // process the response
-                txtAmbientAirTemp.setText("Ambient Air Temp: " + airTemp);  // display the air temperature
-
-            } else {
-                txtAmbientAirTemp.setText("Bluetooth object is null");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            txtAmbientAirTemp.setText("ERROR");
-        }
-    }
-
-
-    private void requestEngineOilTempData() {
-        try {
-            if (bluetooth != null) {
-                bluetooth.requestEngineOilTemp();  // send the Engine Oil Temp request command
-                response = bluetooth.readResponse(engineOilTempExpectedResponse);  // read the response from the OBD device
-
-                try {
-                    Thread.sleep(200); // adjust the delay as necessary
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Log.i(TAG, "Response: " + response);
-
-                if (response == null || response.isEmpty()) {
-                    txtEngineOilTemp.setText("ERROR, empty response");
-                    return;
-                }
-
-                String oilTemp = processEngineOilTempResponse(response);  // process the response
-                txtEngineOilTemp.setText("Engine Oil Temp: " + oilTemp);  // display the engine oil temperature
-
-            } else {
-                txtEngineOilTemp.setText("Bluetooth object is null");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            txtEngineOilTemp.setText("ERROR");
-        }
-    }
-
-
-    private void requestCoolantTempData() {
-        try {
-            if (bluetooth != null) {
-                bluetooth.requestCoolantTemp();  // send the Coolant Temp request command
-                response = bluetooth.waitForPrompt();
-
-                if (response == null || response.isEmpty()) {
-                    txtCoolantTemp.setText("ERROR, empty response");
-                    return;
-                }
-
-                String coolantTemp = processCoolantTempResponse(response);  // process the response
-                txtCoolantTemp.setText(coolantTemp);  // display the coolant temperature
-
-            } else {
-                txtCoolantTemp.setText("Bluetooth object is null");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            txtCoolantTemp.setText("ERROR");
-        }
-    }
-
-
-    private void requestIntakeAirTempData() {
-        try {
-            if (bluetooth != null) {
-                bluetooth.requestIntakeAirTemp();  // Send the Intake Air Temp request command
-                response = bluetooth.waitForPrompt();  // Read the response from the OBD device
-
-                if (response == null || response.isEmpty()) {
-                    txtIntakeAirTemp.setText("ERROR, empty response");
-                    return;
-                }
-
-                Log.i(TAG, "Response gotten: " + response);
-                String intakeAirTemp = processIntakeAirTempResponse(response);  // Process the response
-                txtIntakeAirTemp.setText(intakeAirTemp);  // Display the intake air temperature
-            } else {
-                txtIntakeAirTemp.setText("Bluetooth object is null");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            txtIntakeAirTemp.setText("ERROR");
-        }
-    }
-
-
-    // process the response to extract RPM
-    public String processRPMResponse(String response) {
-        int rpm;
-        if (response.contains("41 0C")) { // try with only 0C
-            try {
-                // extract hex values after '41 0C'
-                String hexA = response.substring(6, 8);
-                String hexB = response.substring(9, 11);
-
-                // convert hex to integers
-                int A = Integer.parseInt(hexA, 16);
-                int B = Integer.parseInt(hexB, 16);
-
-                // calculate RPM
-                rpm = ((A * 256) + B) / 4;
-                Log.w(TAG, "RPM value: " + String.valueOf(rpm));
-
-                if (rpm >= 0 && rpm <= 10000) {
-                    gauge.moveToValue(rpm/100);  // smooth
-                    //gauge.setValue(Float.parseFloat(rpm/100));
-                    gauge.setLowerText(String.valueOf(rpm));
-
-                    rpmLED(rpm);
-
-                    return String.valueOf(rpm);
-                } else {
-                    return "Invalid RPM value : Out of range";
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "Error -1"; // -1 on error
-            }
-        }
-        return "Error response value : '41 0C' not found";
-    }
-
-
-
-    // NOT SUPPORTED : C1
-    public String processFuelLevelResponse(String response) {
-        if (response.contains("41 2F")) {
-            try {
-                // extract hex value after '41 2F'
-                String hexA = response.substring(6, 8);
-
-                // convert hex to integer
-                int A = Integer.parseInt(hexA, 16);
-
-                // calculate fuel level percentage
-                int fuelLevel = (A * 100) / 255;
-
-                Log.w(TAG, "Fuel Level: " + fuelLevel + "%");
-                return String.valueOf(fuelLevel) + "%";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "Error -1"; // return -1 on error
-            }
-        }
-        return "Error response value: '41 2F' not found";
-    }
-
-
-    // NOT SUPPORTED : C1
-    public String processAmbientAirTempResponse(String response) {
-        if (response.contains("41 46")) {
-            try {
-                // extract hex value after '41 46'
-                String hexA = response.substring(6, 8);
-
-                // convert hex to integer
-                int A = Integer.parseInt(hexA, 16);
-
-                // calculate ambient air temperature in Celsius
-                int temperature = A - 40;
-
-                Log.w(TAG, "Ambient Air Temperature: " + temperature + "°C");
-                return String.valueOf(temperature) + "°C";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "Error -1"; // return -1 on error
-            }
-        }
-        return "Error response value: '41 46' not found";
-    }
-
-
-    // NOT SUPPORTED : C1
-    public String processEngineOilTempResponse(String response) {
-        if (response.contains("41 5C")) {
-            try {
-                // extract hex value after '41 5C'
-                String hexA = response.substring(6, 8);
-
-                // convert hex to integer
-                int A = Integer.parseInt(hexA, 16);
-
-                // calculate engine oil temperature in Celsius
-                int temperature = A - 40;
-
-                Log.w(TAG, "Engine Oil Temperature: " + temperature + "°C");
-                return String.valueOf(temperature) + "°C";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "Error -1"; // return -1 on error
-            }
-        }
-        return "Error response value: '41 5C' not found";
-    }
-
-
-    public String processCoolantTempResponse(String response) {
-        int coolantTemp;
-
-        Log.i(TAG, "Response in function " + response);
-
-        // Check if the response contains '41 05'
-        if (response.contains("41 05")) {
-            try {
-                // Extract the hex value after '41 05'
-                String hexTemp = response.substring(6, 8); // Get the hex value
-
-                Log.i(TAG, "Coolant Temperature hex: " + hexTemp);
-
-                // Convert hex to integer
-                coolantTemp = Integer.parseInt(hexTemp, 16); // Convert to int
-
-                Log.w(TAG, "Coolant Temperature value: " + coolantTemp);
-
-                if (coolantTemp >= -40 && coolantTemp <= 215) {
-                    txtCoolantTemperature.setText(coolantTemp + " °C");
-                    gaugeProgressBar.setProgress(coolantTemp);
-                    return "Coolant Temperature: " + coolantTemp + " °C";
-                } else {
-                    return "Invalid Coolant Temp value: Out of range";
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "Error -1"; // Return -1 on error
-            }
-        }
-        return "Error response value: '41 05' not found"; // Return error if '41 05' is not found
-    }
-
-
-
-    public String processIntakeAirTempResponse(String response) {
-        // Normalize the response by trimming and removing unnecessary characters
-        response = response.trim().replaceAll(">", "").replaceAll("<", "");
-
-        // Check if the response contains the expected prefix for intake air temperature
-        if (response.contains("41 0F")) {
-            try {
-                // Split the response by spaces
-                String[] parts = response.split("\\s+");
-                int index = -1;
-
-                // Search for the "41 0F" prefix in the response
-                for (int i = 0; i < parts.length; i++) {
-                    if (i + 1 < parts.length && "41".equals(parts[i]) && "0F".equals(parts[i + 1])) {
-                        index = i + 2; // The hex value should be after "41 0F"
-                        break;
-                    }
-                }
-
-                // Ensure index is valid and within the bounds of the response
-                if (index != -1 && index < parts.length) {
-                    String hexValue = parts[index];
-
-                    // Convert hex to an integer
-                    int temperatureHex = Integer.parseInt(hexValue, 16);
-
-                    // Calculate temperature
-                    int temperature = temperatureHex - 40;
-                    Log.w(TAG, "Intake Air Temperature: " + temperature + "°C");
-
-                    // Display the temperature correctly
-                    if (temperature >= -40 && temperature <= 215) {
-                        txtTemperature.setText(temperature + " °C");
-                        return "Intake Air Temperature: " + temperature + " °C";
-                    } else {
-                        return "Invalid Intake Air Temp value: Out of range";
-                    }
-                } else {
-                    return "Error response: '41 0F' found, but no temperature data";
-                }
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "Invalid hex value in response: " + response, e);
-                return "Error - Invalid hex value";
-            } catch (Exception e) {
-                Log.e(TAG, "An unexpected error occurred: " + e.getMessage(), e);
-                return "Error -1"; // -1 on general error
-            }
-        }
-        return "Error response: '41 0F' not found";
+    // check if works
+    public void setIntakeAirTemp(int IntakeAirTemp) {
+        txtTemperature.setText(IntakeAirTemp + " °C");
     }
 
 
@@ -782,11 +390,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Log.w(TAG, "Setting progress to " + finalRPM);
-
-                            gauge.moveToValue(finalRPM/100);  // smooth
-                            //gauge.setValue(Float.parseFloat(rpm));
-                            gauge.setLowerText(String.valueOf(finalRPM));
-                            //rpmLED(finalRPM);
+                            setRPM(finalRPM);
                         }
                     });
 
@@ -811,9 +415,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         public void run() {
                             // Update your progress bar with the current temperature value
                             Log.w(TAG, "Setting progress to " + finalTemp);
-                            txtCoolantTemperature.setText(finalTemp + " °C");  // Update text
-
-                            gaugeProgressBar.setProgress(finalTemp);
+                            setCoolantTemp(finalTemp);
                         }
                     });
 

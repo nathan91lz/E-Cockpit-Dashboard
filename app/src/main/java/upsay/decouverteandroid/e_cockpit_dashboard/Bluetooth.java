@@ -23,8 +23,8 @@ import java.util.UUID;
 
 public class Bluetooth {
     private BluetoothSocket socket;
-    private OutputStream outputStream;
-    private InputStream inputStream;
+    public static OutputStream outputStream;
+    public static InputStream inputStream;
     public static String macAddress = getConnectedDeviceMac();
     public static String deviceName = getConnectedDeviceName();
 
@@ -32,7 +32,7 @@ public class Bluetooth {
     // UUID for the serial port service on Bluetooth devices
     private static final UUID UUID_SERIAL_PORT = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private static final String TAG = "ECockpitDashboard";
+    private static final String TAG = "Bluetooth";
 
 
 
@@ -140,8 +140,15 @@ public class Bluetooth {
     }
 
 
+    // send an AT command to the device
+    public static void sendATCommand(String command) throws IOException {
+        outputStream.write(command.getBytes());
+        Log.i(TAG, command + "send");
+    }
+
+
     // waiting for the response to the command until the prompt '>' is received and get it
-    public String waitForPrompt() throws IOException {
+    public static String waitForPrompt() throws IOException {
         byte[] buffer = new byte[64];
         StringBuilder responseBuilder = new StringBuilder();
 
@@ -166,85 +173,6 @@ public class Bluetooth {
         Log.i(TAG, "Cleaned response received: '" + cleanedResponse + "'");
         return cleanedResponse;
     }
-
-    
-    // send AT command to initialize the OBD-II connection
-    public void initializeConnection() throws IOException, InterruptedException {
-        sendATCommand("ATZ\r");
-        waitForPrompt(); // Wait until '>' or appropriate response
-
-        sendATCommand("ATE0\r");
-        waitForPrompt();
-
-        sendATCommand("ATL0\r");
-        waitForPrompt();
-    }
-
-
-    // send AT command to request RPM
-    public void requestRPM() throws IOException {
-        sendATCommand("010C\r");
-    }
-
-
-    // send AT command to request Fuel level
-    public void requestFuelLevel() throws IOException {
-        sendATCommand("012F\r");
-    }
-
-
-    // send AT command to request Fuel level
-    public void requestAmbientAirTemp() throws IOException {
-        sendATCommand("0146\r");
-    }
-
-
-    // send AT command to request Fuel level
-    public void requestEngineOilTemp() throws IOException {
-        sendATCommand("015C\r"); // check
-    }
-
-
-    // send AT command to request Coolant temperature
-    public void requestCoolantTemp() throws IOException {
-        sendATCommand("0105\r");
-    }
-
-
-    // send AT command to request Intake air temperature
-    public void requestIntakeAirTemp() throws IOException {
-        sendATCommand("010F\r");
-    }
-
-
-    // send an AT command to the device
-    public void sendATCommand(String command) throws IOException {
-        outputStream.write(command.getBytes());
-    }
-
-
-    public String readResponse(String expectedResponseCode) throws IOException {
-        byte[] buffer = new byte[32];  // Adjust buffer size if necessary
-        int bytes = inputStream.read(buffer);
-
-        if (bytes == -1) {
-            Log.e(TAG, "Error input null");
-            return "Error: No data read from stream";  // Handle stream closure or no data
-        }
-
-        // convert the read bytes to a string
-        String response = new String(buffer, 0, bytes);
-
-        // check if the response contains the expected response code
-        if (response.contains(expectedResponseCode)) {
-            Log.i(TAG, "Response returned: " + response);
-            return response;
-        } else {
-            Log.w(TAG, "Response invalid: " + response);
-            return "Invalid response";
-        }
-    }
-
 
 
     // close the Bluetooth connection
@@ -279,7 +207,7 @@ public class Bluetooth {
 
                 StringBuilder res1 = new StringBuilder();
                 for (byte b : macBytes) {
-                    res1.append(String.format("%02X:",b));
+                    res1.append(java.lang.String.format("%02X:",b));
                 }
 
                 if (res1.length() > 0) {

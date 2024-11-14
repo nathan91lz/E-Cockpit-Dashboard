@@ -1,68 +1,20 @@
 "plantuml.dotPath": "/opt/homebrew/bin/dot" 
-// 'options' + 'D' for rendering
 @startuml
 
-' Define the OBDII class
-class OBDII {
-    # response : String
-    + rpmValue : int
-    + coolantTempValue : int
-    + intakeAirTempValue : int
+actor "Driver" as Driver
+actor "Vehicle (ECU)" as ECU <<Secondary>>
 
-    + sendATCommand(cmd : String) : void
-    + waitForPrompt() : String
-    + setupCommunication() : void
-    + requestRPMData() : String
-    + requestCoolantTemp() : String
-    + requestIntakeAirTemp() : String
-    + processRPMResponse(response : String) : String
-    + processCoolantTempResponse(response : String) : String
-    + processIntakeAirTempResponse(response : String) : String
+rectangle "E-Cockpit Dashboard" {
+    usecase "Visualize Vehicle Information" as VisualizeInfo
+    usecase "Bluetooth Connection" as BluetoothConnection
+    usecase "Retrieve Information via Serial BT" as RetrieveInfo
+    usecase "Useful to Driver" as UsefulToDriver
 }
 
-' Define the Bluetooth class
-class Bluetooth {
-    + macAddress : String
-    + deviceName : String
-    + isConnected : boolean
-
-    + getConnectedDeviceMac() : String
-    + getConnectedDeviceName() : String
-    + connect(address : String) : void
-    + disconnect() : void
-}
-
-' Define the BluetoothDeviceListActivity class
-class BluetoothDeviceListActivity {
-    - setupDeviceList() : void
-    - getPairedDevices() : void
-    - selectBluetoothDevice(address : String) : void
-}
-
-' Define the ECockpitDashboard class
-class ECockpitDashboard {
-    # startRequestLoop() : void
-    # stopRequestLoop() : void
-    - updateRPM(value : int) : void
-    - updateCoolantTemp(value : int) : void
-    - updateIntakeAirTemp(value : int) : void
-    # launchTest() : void
-}
-
-' Define the MainActivity class
-class MainActivity {
-    + emulatorMode : boolean
-
-    + gotoEcockpitFragment() : void
-    # checkDeviceConnection() : void
-    + checkBluetoothPermissions() : void
-    + onRequestPermissionResult() : void
-}
-
-' Define relationships
-OBDII "0..*" --> ECockpitDashboard
-MainActivity "1..*" --> BluetoothDeviceListActivity
-MainActivity "1..1" --> ECockpitDashboard
-Bluetooth "1..*" --> OBDII
+Driver --> VisualizeInfo : "View Data"
+Driver --> UsefulToDriver : "Receive Assistance"
+BluetoothConnection .> RetrieveInfo : <<include>>
+VisualizeInfo .> RetrieveInfo : <<include>>
+ECU --> RetrieveInfo : "Provide Data"
 
 @enduml

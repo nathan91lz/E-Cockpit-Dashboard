@@ -142,7 +142,6 @@ public class BluetoothDeviceListActivity extends AppCompatActivity {
     }
 
 
-
     private void createFakeDeviceList() {
         deviceList.add("Fake Device A\n00:11:22:33:44:55");
         deviceList.add("Fake Device B\n66:77:88:99:AA:BB");
