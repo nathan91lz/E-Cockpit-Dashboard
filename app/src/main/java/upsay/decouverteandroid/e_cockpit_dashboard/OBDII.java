@@ -61,7 +61,7 @@ public class OBDII {
                 Log.d(TAG, "Response: " + response);
 
                 if (response == null || response.isEmpty()) {
-                    //txtRPM.setText("ERROR, empty response");
+                    ECockpitDashboardActivity.isRequesting = false;
                     return "Response null";
                 }
                 processRPMResponse(response);  // process the response to get RPM
@@ -71,7 +71,6 @@ public class OBDII {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            //txtRPM.setText("ERROR");
         }
         return response;
     }

@@ -222,5 +222,33 @@ public class Bluetooth {
     }
 
 
+    public static String getOBDPairedDeviceMacAddress(String deviceName){
+        // get the default Bluetooth adapter
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // check if Bluetooth is supported on the device
+        if (bluetoothAdapter == null) {
+            return "Bluetooth not supported on this device";
+        }
+
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices(); // get the list of paired devices
+
+        // Check if the list is not empty
+        if (pairedDevices.size() > 0) {
+            // Loop through the paired devices and find the one with the matching device name
+            for (BluetoothDevice device : pairedDevices) {
+                // If the device name matches the one provided
+                if (device.getName().equals(deviceName)) {
+                    // Return the MAC address of the matched device
+                    macAddress = device.getAddress();
+                    return macAddress;
+                }
+            }
+        }
+
+        return "Device not found";
+    }
+
+
 
 }

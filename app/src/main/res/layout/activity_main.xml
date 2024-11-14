@@ -75,6 +75,17 @@
 <!--button : go to e cockpit fragment -->
 
     <Button
+        android:id="@+id/bpGetOBDPaired"
+        android:layout_width="195dp"
+        android:layout_height="52dp"
+        android:text="Get OBDII Paired"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.752" />
+
+    <Button
         android:id="@+id/bpGotoBluetoothDevice"
         android:layout_width="253dp"
         android:layout_height="55dp"
@@ -87,7 +98,7 @@
 
     <Button
         android:id="@+id/bpGotoCockpit"
-        android:layout_width="144dp"
+        android:layout_width="300dp"
         android:layout_height="72dp"
         android:text="E-Cockpit Dashboard"
         android:visibility="gone"

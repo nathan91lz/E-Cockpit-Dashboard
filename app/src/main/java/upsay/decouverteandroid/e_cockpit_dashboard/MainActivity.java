@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
     public String macAddress = Bluetooth.macAddress;
     public String deviceName = Bluetooth.deviceName;
+    public final String OBDIIPaired = "raspberrypi"; // DEGUG
+//    public final String OBDIIPaired = "OBDII";
 
     public static boolean emulatorMod = false;
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imgBtIndicator = findViewById(R.id.imgBtIndicator);
         Button refreshButton = findViewById(R.id.bpRefresh);
+        Button getOBDPaired = findViewById(R.id.bpGetOBDPaired);
         TextView txtEtatBt = findViewById(R.id.txtEtatBt);
         TextView txtAddressMac = findViewById(R.id.txtAddressMac);
         TextView txtAddressMacOwn = findViewById(R.id.txtAddressMacOwn);
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 gotoECockpitFragment.setVisibility(View.GONE);
                             } else {
+                                Bluetooth.getOBDPairedDeviceMacAddress(OBDIIPaired);
                                 imgBtIndicator.setImageResource(R.drawable.green_circle);
                                 txtEtatBt.setText("Paired (Emulator)");
                                 txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
@@ -181,6 +185,52 @@ public class MainActivity extends AppCompatActivity {
 
         // initial check to set the visibility of the button on activity start
         checkDeviceConnection(macAddress);
+
+        getOBDPaired.setOnClickListener(v -> {
+            macAddress = Bluetooth.getOBDPairedDeviceMacAddress(OBDIIPaired); // get the MAC address of the paired device
+            deviceName = Bluetooth.getConnectedDeviceNameFromMacAddress(macAddress);
+
+            Log.i(TAG, "mac adress : " + macAddress);
+            Log.i(TAG, "device name: " + deviceName);
+
+            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+                refreshButton.setText("Not found");
+                imgBtIndicator.setImageResource(R.drawable.red_circle);
+                txtEtatBt.setText("Not paired");
+                txtAddressMac.setText("MAC Address: ");
+                refreshButton.setText("Refresh");
+                gotoECockpitFragment.setVisibility(View.GONE);
+            } else {
+                imgBtIndicator.setImageResource(R.drawable.green_circle);
+                txtEtatBt.setText("Paired");
+                txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
+                refreshButton.setText("Found");
+                gotoECockpitFragment.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        // delay for a short period before checking Bluetooth state
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // check if a valid Bluetooth MAC address is available
+            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+                refreshButton.setText("Not found");
+                imgBtIndicator.setImageResource(R.drawable.red_circle);
+                txtEtatBt.setText("Not paired");
+                txtAddressMac.setText("MAC Address: ");
+                refreshButton.setText("Refresh");
+                gotoECockpitFragment.setVisibility(View.GONE);
+            } else {
+                imgBtIndicator.setImageResource(R.drawable.green_circle);
+                txtEtatBt.setText("Paired");
+                txtAddressMac.setText("MAC Address: " + macAddress + "\nDevice Name: " + deviceName);
+                refreshButton.setText("Found");
+                gotoECockpitFragment.setVisibility(View.VISIBLE);
+            }
+            Log.i(TAG, "mac adress : " + macAddress);
+            Log.i(TAG, "device name: " + deviceName);
+        }, 100);
+
     }
 
     private void checkDeviceConnection(String macAddress) {
@@ -202,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
                     REQUEST_BLUETOOTH_PERMISSIONS);
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

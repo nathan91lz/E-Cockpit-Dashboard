@@ -36,7 +36,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private Bluetooth bluetooth;
     private OBDII obd2;
     private Handler handler;
-    private boolean isRequesting = false;
+    public static boolean isRequesting = false;
 
     private Button bpGotoMain;
     private TextView txtRPM; // used for debug
@@ -218,6 +218,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             public void run() {
                 if (isRequesting) {
                     try {
+                        stopRequestLoop();
                         if (rpmRequestCount < 4) {
                             // request and process RPM data
                             //requestRPMData(); //old
@@ -262,8 +263,9 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
     // stop the loop for requesting RPM data
     private void stopRequestLoop() {
-        isRequesting = false;
-        handler.removeCallbacksAndMessages(null);  // Stop all callbacks
+        if(!isRequesting){
+            handler.removeCallbacksAndMessages(null);  // Stop all callbacks
+        }
     }
 
 
