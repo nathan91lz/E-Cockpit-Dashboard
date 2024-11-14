@@ -1,6 +1,5 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
-import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
@@ -124,7 +123,7 @@ public class OBDII {
     // process the response to extract RPM
     public String processRPMResponse(String response) {
         int rpm;
-        if (response.contains("41 0C")) { // try with only 0C
+        if (response.contains(rmpExpectedResponse)) { // try with only 0C
             try {
                 // extract hex values after '41 0C'
                 String hexA = response.substring(6, 8);
@@ -161,7 +160,7 @@ public class OBDII {
         Log.i(TAG, "Response in function " + response);
 
         // Check if the response contains '41 05'
-        if (response.contains("41 05")) {
+        if (response.contains(coolantTempExpectedResponse)) {
             try {
                 // Extract the hex value after '41 05'
                 String hexTemp = response.substring(6, 8); // Get the hex value
@@ -195,7 +194,7 @@ public class OBDII {
         Log.i(TAG, "Response in function: " + response);
 
         // check if the response contains '41 0F'
-        if (response.contains("41 0F")) {
+        if (response.contains(intakeAirTempExpectedResponse)) {
             try {
                 // extract the hex value after '41 0F'
                 String hexTemp = response.substring(6, 8); // get the hex value after '41 0F'
@@ -211,7 +210,7 @@ public class OBDII {
                 Log.i(TAG, "Intake Air Temperature value: " + intakeAirTemp + "°C");
 
                 if (intakeAirTemp >= -40 && intakeAirTemp <= 215) {
-                    dashboard.setIntakeAirTemp(intakeAirTemp); 
+                    dashboard.setIntakeAirTemp(intakeAirTemp);
                     return String.valueOf(intakeAirTemp);
                 } else {
                     return "Invalid Intake Air Temp value: Out of range";
