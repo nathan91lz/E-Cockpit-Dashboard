@@ -12,20 +12,21 @@ skinparam useGUILegend false
 
 ' Define the OBDII class
 class OBDII {
+    + rpmCommand : static String
+    + coolantTempCommand : static String
+    + intakeAirTempCommand : static String
     # response : String
     + rpmValue : int
     + coolantTempValue : int
     + intakeAirTempValue : int
 
-    + sendATCommand(cmd : String) : void
-    + waitForPrompt() : String
     + setupCommunication() : void
     + requestRPMData() : String
     + requestCoolantTemp() : String
     + requestIntakeAirTemp() : String
-    + processRPMResponse(response : String) : String
-    + processCoolantTempResponse(response : String) : String
-    + processIntakeAirTempResponse(response : String) : String
+    + processRPMResponse(String) : String
+    + processCoolantTempResponse(String) : String
+    + processIntakeAirTempResponse(String) : String
 }
 
 ' Define the Bluetooth class
@@ -34,6 +35,8 @@ class Bluetooth {
     + deviceName : String
     + isConnected : boolean
 
+    + sendATCommand(cmd : String) : void
+    + waitForPrompt() : String
     + getConnectedDeviceMac() : String
     + getConnectedDeviceName() : String
     + connect(address : String) : void

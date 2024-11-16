@@ -9,26 +9,7 @@
     tools:context=".ECockpitDashboardActivity">
 
 
-    <!-- text RPM -->
-
-    <!-- button Cancel -->
-
-    <TextView
-        android:id="@+id/txtRPM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="RPM : "
-        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.21"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toBottomOf="@+id/txtIntakeAirTemp"
-        gauge:layout_constraintVertical_bias="0.215"
-        tools:visibility="gone" />
-
-    <!-- RPM Gauge -->
-
+<!-- hidden goto main button -->
     <Button
         android:id="@+id/bpGotoMain"
         android:layout_width="wrap_content"
@@ -42,6 +23,7 @@
         gauge:layout_constraintVertical_bias="0.98"
         tools:visibility="gone" />
 
+<!-- Gauge -->
     <de.nitri.gauge.Gauge
         android:id="@+id/gauge"
         android:layout_width="394dp"
@@ -64,6 +46,7 @@
         gauge:upperText="C1 vts"
         gauge:valuePerNick="1" />
 
+<!-- LED rpm  -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -116,6 +99,139 @@
             android:src="@drawable/gray_circle" />
 
     </LinearLayout>
+
+<!-- Texts intake air temperature  -->
+    <TextView
+        android:id="@+id/txtTemperatureText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:text="Intake Air Temperature :"
+        android:textStyle="bold"
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.062"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="1.0" />
+
+<!-- Texts value of intake air temperature  -->
+    <TextView
+        android:id="@+id/txtTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:text="°C"
+        android:textStyle="bold"
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.0"
+        gauge:layout_constraintStart_toEndOf="@+id/txtTemperatureText"
+        gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="1.0" />
+
+<!-- Texts value of coolant temperature displayed -->
+    <TextView
+        android:id="@+id/txtCoolantTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="24dp"
+        android:text=" °C"
+        android:textStyle="bold"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.0"
+        gauge:layout_constraintStart_toEndOf="@+id/progressBar"
+        gauge:layout_constraintTop_toBottomOf="@+id/gauge"
+        gauge:layout_constraintVertical_bias="0.023" />
+
+<!-- progress bar of coolant temperature  -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="220dp"
+        android:layout_height="35dp"
+        android:max="130"
+        android:min="50"
+        android:progress="80"
+        android:progressDrawable="@drawable/coolant_temp_progress_bar"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.476"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/gauge"
+        gauge:layout_constraintVertical_bias="0.049" />
+
+<!-- Texts coolant temperature  -->
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="220dp"
+        android:layout_height="19dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.476"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/progressBar"
+        gauge:layout_constraintVertical_bias="0.0">
+
+        <!-- Temperature labels (60, 80, 100, 120) -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            android:text="60" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="80" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="100" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="120" />
+    </LinearLayout>
+
+<!-- Google Map View -->
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="414dp"
+        android:layout_height="269dp"
+        android:importantForAccessibility="no"
+        gauge:layout_constraintBottom_toBottomOf="parent"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.466"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toTopOf="parent"
+        gauge:layout_constraintVertical_bias="1.0"
+        tools:visibility="visible" />
+
+
+    <!-- DEBUG text -->
+    <TextView
+        android:id="@+id/txtRPM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="RPM : "
+        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
+        gauge:layout_constraintEnd_toEndOf="parent"
+        gauge:layout_constraintHorizontal_bias="0.21"
+        gauge:layout_constraintStart_toStartOf="parent"
+        gauge:layout_constraintTop_toBottomOf="@+id/txtIntakeAirTemp"
+        gauge:layout_constraintVertical_bias="0.215"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/txtCoolantTemp"
@@ -179,119 +295,6 @@
         gauge:layout_constraintStart_toStartOf="parent"
         gauge:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
-
-    <TextView
-        android:id="@+id/txtTemperatureText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="17dp"
-        android:text="Intake Air Temperature :"
-        android:textStyle="bold"
-        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.062"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="1.0" />
-
-    <!-- Google Map View -->
-
-    <TextView
-        android:id="@+id/txtTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="17dp"
-        android:text="°C"
-        android:textStyle="bold"
-        gauge:layout_constraintBottom_toTopOf="@+id/gauge"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.0"
-        gauge:layout_constraintStart_toEndOf="@+id/txtTemperatureText"
-        gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/txtCoolantTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="24dp"
-        android:text=" °C"
-        android:textStyle="bold"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.0"
-        gauge:layout_constraintStart_toEndOf="@+id/progressBar"
-        gauge:layout_constraintTop_toBottomOf="@+id/gauge"
-        gauge:layout_constraintVertical_bias="0.023" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="220dp"
-        android:layout_height="35dp"
-        android:max="130"
-        android:min="50"
-        android:progress="80"
-        android:progressDrawable="@drawable/coolant_temp_progress_bar"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.476"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toBottomOf="@+id/gauge"
-        gauge:layout_constraintVertical_bias="0.049" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="220dp"
-        android:layout_height="19dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.476"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toBottomOf="@+id/progressBar"
-        gauge:layout_constraintVertical_bias="0.0">
-
-        <!-- Temperature labels (60, 80, 100, 120) -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="35dp"
-            android:text="60" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:text="80" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:text="100" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="120" />
-    </LinearLayout>
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="414dp"
-        android:layout_height="269dp"
-        android:importantForAccessibility="no"
-        gauge:layout_constraintBottom_toBottomOf="parent"
-        gauge:layout_constraintEnd_toEndOf="parent"
-        gauge:layout_constraintHorizontal_bias="0.466"
-        gauge:layout_constraintStart_toStartOf="parent"
-        gauge:layout_constraintTop_toTopOf="parent"
-        gauge:layout_constraintVertical_bias="1.0"
-        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
