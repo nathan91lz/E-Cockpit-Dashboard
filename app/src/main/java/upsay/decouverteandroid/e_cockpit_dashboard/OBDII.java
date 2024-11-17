@@ -6,7 +6,7 @@ import java.io.IOException;
 
 
 public class OBDII {
-    private Bluetooth bluetooth;
+    Bluetooth bluetooth = new Bluetooth();
     private ECockpitDashboardActivity dashboard;
 
     private String rmpExpectedResponse = "41 0C";
@@ -39,14 +39,14 @@ public class OBDII {
     // send AT command to initialize the OBD-II connection
     public void initializeConnection() throws IOException, InterruptedException {
         Log.i(TAG, "Inititialization start");
-        Bluetooth.sendATCommand(atzCommand);
-        Bluetooth.waitForPrompt(); // Wait until '>' or appropriate response
+        bluetooth.sendATCommand(atzCommand);
+        bluetooth.waitForPrompt(); // Wait until '>' or appropriate response
 
-        Bluetooth.sendATCommand(ate0Command);
-        Bluetooth.waitForPrompt();
+        bluetooth.sendATCommand(ate0Command);
+        bluetooth.waitForPrompt();
 
-        Bluetooth.sendATCommand(atl0Command);
-        Bluetooth.waitForPrompt();
+        bluetooth.sendATCommand(atl0Command);
+        bluetooth.waitForPrompt();
         Log.i(TAG, "Done");
     }
 
@@ -56,8 +56,8 @@ public class OBDII {
         try {
             if (bluetooth != null) {
                 Log.i(TAG, "HERE");
-                Bluetooth.sendATCommand(rpmCommand);  // send the RPM request command
-                response = Bluetooth.waitForPrompt();  // wait for the response until prompt '>' is received
+                bluetooth.sendATCommand(rpmCommand);  // send the RPM request command
+                response = bluetooth.waitForPrompt();  // wait for the response until prompt '>' is received
                 Log.d(TAG, "Response: " + response);
 
                 if (response == null || response.isEmpty()) {
@@ -79,7 +79,7 @@ public class OBDII {
     public String requestCoolantTempData() {
         try {
             if (bluetooth != null) {
-                Bluetooth.sendATCommand(coolantTempCommand);  // send the Coolant Temp request command
+                bluetooth.sendATCommand(coolantTempCommand);  // send the Coolant Temp request command
                 response = bluetooth.waitForPrompt();
 
                 if (response == null || response.isEmpty()) {
@@ -101,8 +101,8 @@ public class OBDII {
     public String requestIntakeAirTempData() {
         try {
             if (bluetooth != null) {
-                Bluetooth.sendATCommand(intakeAirTempCommand);  // Send the Intake Air Temp request command
-                response = Bluetooth.waitForPrompt();  // Read the response from the OBD device
+                bluetooth.sendATCommand(intakeAirTempCommand);  // Send the Intake Air Temp request command
+                response = bluetooth.waitForPrompt();  // Read the response from the OBD device
 
                 if (response == null || response.isEmpty()) {
                     return "Response null";

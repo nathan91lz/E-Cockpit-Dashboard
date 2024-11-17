@@ -22,6 +22,7 @@ import java.util.Set;
 import android.util.Log;
 
 public class BluetoothDeviceListActivity extends AppCompatActivity {
+    private Bluetooth bluetooth = new Bluetooth();
 
     private ListView deviceListView;
     private BluetoothAdapter bluetoothAdapter;
@@ -32,7 +33,7 @@ public class BluetoothDeviceListActivity extends AppCompatActivity {
 
     private Button gotoMainActivity;
 
-    private static final String TAG = "BluetoothDeviceListActivity";
+    private static final String TAG = "BluetoothDeviceListActi";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,11 +165,11 @@ public class BluetoothDeviceListActivity extends AppCompatActivity {
                 String deviceName = parts[0].trim();
                 String macAddress = parts[1].trim();
 
-                Bluetooth.macAddress = macAddress;
-                Bluetooth.deviceName = deviceName;
+                bluetooth.setMacAddress(macAddress);
+                bluetooth.setDeviceName(deviceName);
 
                 // Show a toast with the connected device details
-                Toast.makeText(this, "Connected to " + Bluetooth.deviceName + " device", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Connected to " + bluetooth.deviceName + " device", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Invalid device information", Toast.LENGTH_SHORT).show();
             }
@@ -176,4 +177,8 @@ public class BluetoothDeviceListActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid device information", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
+
 }

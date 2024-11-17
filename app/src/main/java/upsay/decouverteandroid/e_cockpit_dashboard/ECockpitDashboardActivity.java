@@ -1,5 +1,6 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,9 +34,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class ECockpitDashboardActivity extends AppCompatActivity {
+    private Handler handler = new Handler(Looper.getMainLooper());
+
     private Bluetooth bluetooth;
+    String macAddress;
+    String deviceName;
+
     private OBDII obd2;
-    private Handler handler;
     public static boolean isRequesting = false;
 
     private Button bpGotoMain;
@@ -54,8 +59,6 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private ImageView led5;
 
 
-    public String macAddress = Bluetooth.macAddress;
-    public String deviceName = Bluetooth.deviceName;
 
     private boolean debugView = false; // true to debug
 
@@ -87,11 +90,22 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_cockpit_dashboard);
 
+        // get bluetooth object from Main
+        Intent intent = getIntent();
+        bluetooth = (Bluetooth) intent.getSerializableExtra("BluetoothObject");
+
+        if (bluetooth != null) {
+            macAddress = bluetooth.getMacAddress();
+            deviceName = bluetooth.getDeviceName();
+            // Use macAddress and deviceName as needed
+        } else {
+            Log.e("ECockpitDashboard", "Bluetooth object is null!");
+        }
+
+
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
 
-        bluetooth = new Bluetooth();
-        handler = new Handler(Looper.getMainLooper());
 
         bpGotoMain = findViewById(R.id.bpGotoMain);
         txtRPM = findViewById(R.id.txtRPM);
@@ -136,7 +150,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
 
         // try to connect to the OBDII device using the MAC address
         // DEGUG UNCOMMENT LINE :
-        if (!MainActivity.emulatorMod) {
+        if (!MainActivity.emulatorMode) {
             if (!macAddress.equals("No connected Bluetooth device found") && !macAddress.equals("Bluetooth not enabled or not supported")) {
                 try {
                     bluetooth.connect(macAddress);

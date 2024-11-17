@@ -13,6 +13,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -20,13 +21,12 @@ import java.util.Set;
 import java.util.UUID;
 
 
-
-public class Bluetooth {
+public class Bluetooth implements Serializable {
     private BluetoothSocket socket;
-    public static OutputStream outputStream;
-    public static InputStream inputStream;
-    public static String macAddress = getConnectedDeviceMac();
-    public static String deviceName = getConnectedDeviceName();
+    public OutputStream outputStream;
+    public InputStream inputStream;
+    public String macAddress = "None";
+    public String deviceName = "None";
 
 
     // UUID for the serial port service on Bluetooth devices
@@ -38,7 +38,7 @@ public class Bluetooth {
 
     // DEBUG MODE ! MAC ADDRESS FAKED
     // function to get the MAC address of the currently connected Bluetooth device
-    public static String getConnectedDeviceMac() {
+    public String getConnectedDeviceMac() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // check if Bluetooth is supported and enabled
@@ -51,6 +51,7 @@ public class Bluetooth {
         // iterate over paired devices to find connected device
         for (BluetoothDevice device : pairedDevices) {
             macAddress = device.getAddress();
+            setMacAddress(macAddress);
             return macAddress;
         }
 
@@ -58,7 +59,7 @@ public class Bluetooth {
     }
 
     // Used for BLE
-    public static String getConnectedDeviceMacFromMacAddress(String macAddress) {
+    public String getConnectedDeviceMacFromMacAddress(String macAddress) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Check if Bluetooth is supported and enabled
@@ -71,6 +72,7 @@ public class Bluetooth {
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
 
         if (device != null) {
+            setMacAddress(macAddress);
             return macAddress;  // Return the provided MAC address
         }
 
@@ -78,10 +80,33 @@ public class Bluetooth {
     }
 
 
+    public String getMacAddress() {
+        Log.i(TAG, "Mac Adrress is: " + macAddress);
+        return macAddress;
+    }
+
+
+    public String getDeviceName() {
+        Log.i(TAG, "Device name is: " + deviceName);
+        return deviceName;
+    }
+
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+        Log.i(TAG, "Mac Adrress set: " + macAddress);
+    }
+
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+        Log.i(TAG, "Device Name set: " + deviceName);
+    }
+
     // DEBUG MODE ! DEVICE NAME FAKED
     // function get device name
     @SuppressLint("MissingPermission")
-    public static String getConnectedDeviceName() {
+    public String getConnectedDeviceName() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Ensure Bluetooth is supported and enabled
@@ -96,7 +121,7 @@ public class Bluetooth {
         for (BluetoothDevice device : pairedDevices) {
             // Return the name of the first paired device
             deviceName = device.getName();
-
+            setDeviceName(deviceName);
             return deviceName;
         }
         return "No connected Bluetooth device found";
@@ -105,7 +130,7 @@ public class Bluetooth {
 
     // used for BLE
     @SuppressLint("MissingPermission")
-    public static String getConnectedDeviceNameFromMacAddress(String macAddress) {
+    public String getConnectedDeviceNameFromMacAddress(String macAddress) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Ensure Bluetooth is supported and enabled
@@ -118,7 +143,9 @@ public class Bluetooth {
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
 
         if (device != null) {
-            return device.getName();  // Return the name of the device
+            deviceName = device.getName();
+            setDeviceName(deviceName);
+            return deviceName;
         }
 
         return "No connected Bluetooth device found";
@@ -141,14 +168,14 @@ public class Bluetooth {
 
 
     // send an AT command to the device
-    public static void sendATCommand(String command) throws IOException {
+    public void sendATCommand(String command) throws IOException {
         outputStream.write(command.getBytes());
         Log.i(TAG, command + "send");
     }
 
 
     // waiting for the response to the command until the prompt '>' is received and get it
-    public static String waitForPrompt() throws IOException {
+    public String waitForPrompt() throws IOException {
         byte[] buffer = new byte[64];
         StringBuilder responseBuilder = new StringBuilder();
 
@@ -194,7 +221,7 @@ public class Bluetooth {
 
 
     // get own mac address
-    public static String getOwnMacAddres() {
+    public String getOwnMacAddres() {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
@@ -222,7 +249,7 @@ public class Bluetooth {
     }
 
 
-    public static String getOBDPairedDeviceMacAddress(String deviceName){
+    public String getOBDPairedDeviceMacAddress(String deviceName){
         // get the default Bluetooth adapter
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -241,6 +268,7 @@ public class Bluetooth {
                 if (device.getName().equals(deviceName)) {
                     // Return the MAC address of the matched device
                     macAddress = device.getAddress();
+                    setMacAddress(macAddress);
                     return macAddress;
                 }
             }
