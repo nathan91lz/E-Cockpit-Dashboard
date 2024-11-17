@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             macAddress = bluetooth.getMacAddress();
                             deviceName = bluetooth.getDeviceName();
-                            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+                            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported") || macAddress.equals("None")) {
                                 refreshButton.setText("Not found");
                                 imgBtIndicator.setImageResource(R.drawable.red_circle);
                                 txtEtatBt.setText("Not paired");
@@ -142,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             macAddress = bluetooth.getMacAddress();
                             deviceName = bluetooth.getDeviceName();
-                            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+
+                            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported") || macAddress.equals("None")) {
                                 refreshButton.setText("Not found");
                                 imgBtIndicator.setImageResource(R.drawable.red_circle);
                                 txtEtatBt.setText("Not paired");
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "mac adress : " + macAddress);
             Log.i(TAG, "device name: " + deviceName);
 
-            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported") || macAddress.equals("None")) {
                 refreshButton.setText("Not found");
                 imgBtIndicator.setImageResource(R.drawable.red_circle);
                 txtEtatBt.setText("Not paired");
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             macAddress = bluetooth.getMacAddress();
             deviceName = bluetooth.getDeviceName();
             // check if a valid Bluetooth MAC address is available
-            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported")) {
+            if (macAddress.equals("No connected Bluetooth device found") || macAddress.equals("Bluetooth not enabled or not supported") || macAddress.equals("None")) {
                 refreshButton.setText("Not found");
                 imgBtIndicator.setImageResource(R.drawable.red_circle);
                 txtEtatBt.setText("Not paired");
