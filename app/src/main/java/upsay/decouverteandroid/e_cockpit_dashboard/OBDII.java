@@ -16,15 +16,15 @@ public class OBDII {
     private String coolantTempExpectedResponse = "41 05";
     private String intakeAirTempExpectedResponse = "41 0F";
 
-    private static final String atzCommand = "ATZ\n";
-    private static final String ate0Command = "ATE0\n";
-    private static final String atl0Command = "ATL0\n";
-    private static final String rpmCommand = "010C\n";
+    private static final String atzCommand = "ATZ\r";
+    private static final String ate0Command = "ATE0\r";
+    private static final String atl0Command = "ATL0\r";
+    private static final String rpmCommand = "010C\r";
     private static final String fuelLevelCommand = "012F\n";
     private static final String ambientAirTempCommand = "0146\n";
     private static final String engineOilTempCommand = "015C\n";
-    private static final String coolantTempCommand = "0105\n";
-    private static final String intakeAirTempCommand = "010F\n";
+    private static final String coolantTempCommand = "0105\r";
+    private static final String intakeAirTempCommand = "010F\r";
 
     private String response;
 
@@ -122,6 +122,7 @@ public class OBDII {
     // process the response to extract RPM
     public String processRPMResponse(String response) {
         int rpm;
+        Log.i(TAG, "PROCESS RPM value: " + response);
         if (response.contains(rmpExpectedResponse)) { // try with only 0C
             try {
                 // extract hex values after '41 0C'

@@ -8,8 +8,8 @@
 
     <ListView
         android:id="@+id/device_list"
-        android:layout_width="match_parent"
-        android:layout_height="655dp"
+        android:layout_width="723dp"
+        android:layout_height="851dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,12 +17,14 @@
 
     <Button
         android:id="@+id/bpBackToMainActivity"
+        style="@style/CustomButton"
         android:layout_width="317dp"
         android:layout_height="wrap_content"
         android:text="Back"
-        style="@style/CustomButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/device_list" />
+        app:layout_constraintTop_toBottomOf="@+id/device_list"
+        app:layout_constraintVertical_bias="0.49" />
 </androidx.constraintlayout.widget.ConstraintLayout>

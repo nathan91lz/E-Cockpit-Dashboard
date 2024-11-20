@@ -67,8 +67,8 @@ public class BluetoothDeviceListActivity extends AppCompatActivity {
 
 
         gotoMainActivity.setOnClickListener(v -> {
-            Intent intent = new Intent(BluetoothDeviceListActivity.this, MainActivity.class);
-            startActivity(intent);
+            Intent intentMain = new Intent(BluetoothDeviceListActivity.this, MainActivity.class);
+            startActivity(intentMain);
         });
 
 

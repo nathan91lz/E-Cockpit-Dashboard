@@ -1,14 +1,15 @@
 "plantuml.dotPath": "/opt/homebrew/bin/dot" 
 // 'options' + 'D' for rendering
 @startuml
-' Apply UML2 component style for compactness
-skinparam componentStyle uml2
+' Use rectangle style to remove UML2 circled icons
+skinparam componentStyle rectangle
 skinparam shadowing false
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
 skinparam useGUILegend false
 
-
+' Remove stereotypes
+hide stereotype
 
 ' Define the OBDII class
 class OBDII {
@@ -16,11 +17,18 @@ class OBDII {
     + coolantTempCommand : static String
     + intakeAirTempCommand : static String
     # response : String
-    + rpmValue : int
-    + coolantTempValue : int
-    + intakeAirTempValue : int
+    # rmpExpectedResponse : String
+    # coolantTempExpectedResponse : String
+    # intakeAirTempExpectedResponse : String
+    # atzCommand : static final String
+    # ate0Command : static final String
+    # atl0Command : static final String
+    # rpmCommand : static final String
+    # coolantTempCommand : static final String
+    # intakeAirTempCommand : static final String
 
     + setupCommunication() : void
+    + initializeConnection() : void
     + requestRPMData() : String
     + requestCoolantTemp() : String
     + requestIntakeAirTemp() : String
@@ -34,13 +42,22 @@ class Bluetooth {
     + macAddress : String
     + deviceName : String
     + isConnected : boolean
+    # socket : BluetoothSocket
+    + inputStream : InputStream
+    + outputStream : OutputStream
+    # UUID_SERIAL_PORT : static final UUID
 
+    + getMacAddress() : String
+    + getDeviceName() : String
+    + setMacAddress(String) : void
+    + setDeviceName(String) : void
     + sendATCommand(cmd : String) : void
     + waitForPrompt() : String
     + getConnectedDeviceMac() : String
     + getConnectedDeviceName() : String
     + connect(address : String) : void
     + disconnect() : void
+    + getOBDPairedDeviceMacAddress(String) : String
 }
 
 ' Define the BluetoothDeviceListActivity class
@@ -48,26 +65,41 @@ class BluetoothDeviceListActivity {
     - setupDeviceList() : void
     - getPairedDevices() : void
     - selectBluetoothDevice(address : String) : void
+    - onActivityResult(int, int, Intent) : void
+    - createFakeDeviceList() : void
 }
 
 ' Define the ECockpitDashboard class
 class ECockpitDashboard {
+    - debugView : boolean 
+    - rpmRequestCount : int
+    - isBlinking : boolean 
+
+    # initializeOBDConnection() : void
+    # setDebugView(boolean) : void
     # startRequestLoop() : void
     # stopRequestLoop() : void
-    - updateRPM(value : int) : void
-    - updateCoolantTemp(value : int) : void
-    - updateIntakeAirTemp(value : int) : void
+    - setRPM(value : int) : void
+    - setCoolantTemp(value : int) : void
+    - setIntakeAirTemp(value : int) : void
     # launchTest() : void
+    # rpmLED(int) : void
+    # setBlinking() : void
+    # stopBlinking() : void
 }
 
 ' Define the MainActivity class
 class MainActivity {
+    # bluetooth : Bluetooth
     + emulatorMode : boolean
+    + OBDIIPaired : final String
+    # REQUEST_BLUETOOTH_PERMISSIONS : static final int
 
+    # onCeate(Bundle) : void
     + gotoEcockpitFragment() : void
     # checkDeviceConnection() : void
-    + checkBluetoothPermissions() : void
-    + onRequestPermissionResult() : void
+    # checkBluetoothPermissions() : void
+    + onRequestPermissionResult(int, String[], int[]) : void
 }
 
 ' Add interface icons for activity classes

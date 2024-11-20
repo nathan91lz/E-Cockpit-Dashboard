@@ -196,6 +196,7 @@ public class Bluetooth implements Serializable {
                 .replace(">", "")       // Remove the prompt '>'
                 .replace("\r", "")      // Remove carriage return
                 .replace("\n", "")      // Remove line feed
+                .replace("?", "")       // Remove the '?'
                 .trim();                // Trim any leading/trailing spaces
         Log.i(TAG, "Cleaned response received: '" + cleanedResponse + "'");
         return cleanedResponse;

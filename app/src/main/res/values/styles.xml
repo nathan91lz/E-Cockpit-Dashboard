@@ -10,6 +10,15 @@
         <item name="android:buttonStyle">@style/CustomButton</item>
     </style>
 
+    <!-- Night Mode Theme -->
+    <style name="AppTheme.Night" parent="Theme.AppCompat">
+        <item name="colorPrimary">#121212</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#BB86FC</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
     <!-- button style -->
     <style name="CustomButton">
         <item name="android:padding">8dp</item>

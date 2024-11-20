@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
     public String macAddress = bluetooth.getMacAddress();
     public String deviceName = bluetooth.getDeviceName();
-    public final String OBDIIPaired = "raspberrypi"; // DEGUG
-//    public final String OBDIIPaired = "OBDII";
+    //public final String OBDIIPaired = "raspberrypi"; // DEGUG
+    public final String OBDIIPaired = "OBDII";
 
     public static boolean emulatorMode = false;
 
@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     refreshButton.setText("Searching ...");
 
-                    // Delay the MAC address check and UI update by 1 second
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {

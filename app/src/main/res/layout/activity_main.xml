@@ -9,18 +9,19 @@
 
 
 <!--text : mac address -->
+
+    <!--text : device name -->
     <TextView
         android:id="@+id/txtAddressMac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:text="MAC Address :"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.201"
+        app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bpRefresh" />
 
-<!--text : device name -->
     <TextView
         android:id="@+id/txtAddressMacOwn"
         android:layout_width="wrap_content"
@@ -34,6 +35,8 @@
         app:layout_constraintTop_toBottomOf="@+id/txtAddressMac" />
 
 <!--text : connexion status -->
+
+    <!--image : red circle status -->
     <TextView
         android:id="@+id/txtEtatBt"
         android:layout_width="wrap_content"
@@ -41,12 +44,11 @@
         android:text="Not connected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintHorizontal_bias="0.845"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.057" />
+        app:layout_constraintVertical_bias="0.053" />
 
-<!--image : red circle status -->
     <ImageView
         android:id="@+id/imgBtIndicator"
         android:layout_width="22dp"
@@ -60,25 +62,25 @@
         app:layout_constraintVertical_bias="0.053" />
 
 <!--button : refresh -->
-    <Button
-        android:id="@+id/bpRefresh"
-        android:layout_width="155dp"
-        android:layout_height="60dp"
-        android:text="Refresh"
-        style="@style/CustomButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.235"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.055"
-        />
 
-<!--button : go to e cockpit fragment   -->
+    <!--button : go to e cockpit fragment   -->
 
     <!--text : burron goto paired bt device -->
 
     <!--text : button goto dashboard fragment -->
+    <Button
+        android:id="@+id/bpRefresh"
+        style="@style/CustomButton"
+        android:layout_width="155dp"
+        android:layout_height="60dp"
+        android:text="Refresh"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.152"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.059" />
+
     <Button
         android:id="@+id/bpGetOBDPaired"
         style="@style/CustomButton"
@@ -89,7 +91,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.848" />
+        app:layout_constraintVertical_bias="0.861" />
 
     <Button
         android:id="@+id/bpGotoBluetoothDevice"
@@ -119,8 +121,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="450dp"
-        android:layout_height="271dp"
+        android:layout_width="729dp"
+        android:layout_height="558dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"

@@ -1,6 +1,7 @@
 package upsay.decouverteandroid.e_cockpit_dashboard;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,12 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
@@ -44,6 +47,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     public static boolean isRequesting = false;
 
     private Button bpGotoMain;
+    private ImageButton ibPNightMode;
     private TextView txtRPM; // used for debug
     private TextView txtFuelLevel;
     private TextView txtAmbientAirTemp;
@@ -58,23 +62,11 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private ImageView led4;
     private ImageView led5;
 
-
-
-    private boolean debugView = false; // true to debug
-
     private int rpmRequestCount = 0;
 
     private Gauge gauge;
 
     private ProgressBar gaugeProgressBar;
-
-    // MOVE > OBDII
-    private String rmpExpectedResponse = "41 0C";
-    private String fuelLevelExpectedResponse = "41 2F";
-    private String ambientAirTempExpectedResponse = "41 46";
-    private String engineOilTempExpectedResponse = "41 5C";
-    private String coolantTempExpectedResponse = "41 05";
-    private String intakeAirTempExpectedResponse = "41 0F";
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -83,12 +75,19 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
     private Runnable blinkRunnable;
     private boolean isBlinking = false;
 
+    private static final String DEFAULT_MODE = "ThemePrefs";
+    private static final String NIGHT_MODE = "isNightMode";
+
+    private boolean debugView = false; // true to debug
+
     private static final String TAG = "ECockpitDashboard";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_e_cockpit_dashboard);
+
+        //updateFragmentBackground();
 
         // get bluetooth object from Main
         Intent intent = getIntent();
@@ -102,12 +101,18 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             Log.e("ECockpitDashboard", "Bluetooth object is null!");
         }
 
+        if (isNightModeEnabled()) {
+            setTheme(R.style.AppTheme_Night);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
 
         Log.i(TAG, "MAC address is :" + macAddress);
         Log.i(TAG, "Device name is :" + deviceName);
 
 
         bpGotoMain = findViewById(R.id.bpGotoMain);
+        ibPNightMode = findViewById(R.id.ibPNightMode);
         txtRPM = findViewById(R.id.txtRPM);
         txtFuelLevel = findViewById(R.id.txtFuelLevel);
         txtAmbientAirTemp = findViewById(R.id.txtAmbientAirTemp);
@@ -184,6 +189,13 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             }
             finish();  // close the activity
         });
+
+
+        ibPNightMode.setOnClickListener(view -> {
+            toggleNightMode();
+        });
+
+
     }
 
 
@@ -257,7 +269,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
                         rpmRequestCount = (rpmRequestCount + 1) % 6; // 4 RPM requests + 2 other data requests
 
                         // add a delay before the next request
-                        handler.postDelayed(this, 300); // between 200 to 300ms
+                        handler.postDelayed(this, 200); // between 200 to 300ms
                     } catch (Exception e) {
                         // log the error and display a message on the UI
                         Log.e(TAG, "Error during data request", e);
@@ -290,6 +302,7 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
         gauge.setLowerText(String.valueOf(rpm));
         txtRPM.setText("RPM: " + rpm);
         rpmLED(rpm);
+        Log.i(TAG, "Gauge RPM");
     }
 
 
@@ -515,6 +528,49 @@ public class ECockpitDashboardActivity extends AppCompatActivity {
             isBlinking = false;
         }
     }
+
+
+    private boolean isNightModeEnabled() {
+        SharedPreferences preferences = getSharedPreferences(DEFAULT_MODE, MODE_PRIVATE);
+
+        return preferences.getBoolean(NIGHT_MODE, false);
+    }
+
+    private void toggleNightMode() {
+        boolean isNightMode = isNightModeEnabled();
+
+        // save the new preference
+        SharedPreferences.Editor editor = getSharedPreferences(DEFAULT_MODE, MODE_PRIVATE).edit();
+        editor.putBoolean(NIGHT_MODE, !isNightMode);
+        editor.apply();
+
+        // update the fragment's background dynamically
+        updateFragmentBackground();
+    }
+
+
+    private void updateFragmentBackground() {
+        boolean isNightMode = isNightModeEnabled();
+        ConstraintLayout fragmentRootView = findViewById(R.id.fragmentRootView);
+
+        if (fragmentRootView != null) {
+            int color = isNightMode ? Color.BLACK : Color.WHITE;
+            fragmentRootView.setBackgroundColor(color);
+        }
+
+        if (ibPNightMode != null) {
+            if (isNightMode) {
+                ibPNightMode.setImageResource(R.drawable.moon);
+            } else {
+                ibPNightMode.setImageResource(R.drawable.sun);
+            }
+        }
+    }
+
+
+
+
+
 
 
 
